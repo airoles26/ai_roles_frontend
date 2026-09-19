@@ -6,6 +6,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import logo from "../assets/logo.jpeg";
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
@@ -19,20 +21,13 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
-        <a href="/" className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm">
-            <Sparkles size={19} />
-          </div>
-
-          <div>
-            <div className="text-lg font-black tracking-tight text-slate-950">
-              AI Roles
-            </div>
-            <div className="-mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">
-              AI Careers
-            </div>
-          </div>
-        </a>
+        <a href="/" className="flex items-center">
+  <img
+    src={logo}
+    alt="AI Roles Online"
+    className="h-14 w-auto object-contain sm:h-16"
+  />
+</a>
 
         <nav className="hidden items-center gap-8 lg:flex">
           {links.map((link) => (
