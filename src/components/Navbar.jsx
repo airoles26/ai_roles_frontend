@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 
 import {
   Menu,
@@ -13,8 +14,14 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const links = [
-    { label: "Jobs", href: "/jobs" },
-    { label: "Companies", href: "/companies" },
+    {
+      label: "Jobs",
+      href: "/jobs",
+    },
+    {
+      label: "Companies",
+      href: "/companies",
+    },
     {
       label: "Remote Jobs",
       href: "/jobs?remote=true",
@@ -25,57 +32,92 @@ export default function Navbar() {
     },
   ];
 
-  return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm backdrop-blur-xl">
 
-      {/* NAVBAR */}
-      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-5 sm:h-28 sm:px-6 lg:h-32 lg:px-8">
+  const closeMobileMenu = () => {
+    setOpen(false);
+  };
+
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md">
+
+      {/* MAIN NAVBAR */}
+      <div className="mx-auto flex h-[88px] max-w-7xl items-center justify-between px-4 sm:h-[96px] sm:px-6 lg:px-8">
 
         {/* LOGO */}
-        <a
-          href="/"
-          className="flex h-full items-center"
+        <Link
+          to="/"
+          onClick={closeMobileMenu}
+          className="flex shrink-0 items-center"
         >
           <img
             src={logo}
             alt="AI Roles Online"
-            className="h-20 w-auto object-contain sm:h-24 lg:h-28"
+            className="h-[68px] w-auto object-contain sm:h-[76px] lg:h-[82px]"
           />
-        </a>
+        </Link>
 
 
         {/* DESKTOP NAVIGATION */}
-        <nav className="hidden items-center gap-8 lg:flex">
-          {links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="relative py-3 text-sm font-semibold text-slate-600 transition duration-200 hover:text-[#1699A4]"
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav className="hidden items-center gap-1 lg:flex">
+
+          {links.map((link) => {
+
+            /*
+             * Remote Jobs contains a query parameter.
+             * NavLink works best with pathname routes,
+             * so a regular Link is used for it.
+             */
+            if (link.href.includes("?")) {
+              return (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-[#1699A4]/5 hover:text-[#1699A4]"
+                >
+                  {link.label}
+                </Link>
+              );
+            }
+
+            return (
+              <NavLink
+                key={link.label}
+                to={link.href}
+                className={({ isActive }) =>
+                  `rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? "bg-[#1699A4]/10 text-[#147C91]"
+                      : "text-slate-700 hover:bg-[#1699A4]/5 hover:text-[#1699A4]"
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            );
+          })}
         </nav>
 
 
         {/* DESKTOP ACTIONS */}
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-2 lg:flex">
 
-          <a
-            href="/login"
-            className="px-4 py-3 text-sm font-bold text-[#071A3D] transition hover:text-[#1699A4]"
+          <Link
+            to="/login"
+            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#071A3D] transition hover:bg-[#1699A4]/5 hover:text-[#1699A4]"
           >
             Sign in
-          </a>
+          </Link>
 
-          <a
-            href="/register"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#1699A4] px-5 py-3 text-sm font-bold text-white transition duration-200 hover:bg-[#147C91]"
+
+          <Link
+            to="/register"
+            className="flex items-center gap-2 rounded-xl bg-[#1699A4] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#147C91]"
           >
             Get job alerts
 
             <ArrowRight size={16} />
-          </a>
+          </Link>
         </div>
 
 
@@ -83,13 +125,13 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#071A3D]/5 text-[#071A3D] transition hover:bg-[#1699A4]/10 hover:text-[#1699A4] lg:hidden"
-          aria-label="Toggle navigation"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-[#071A3D] transition hover:bg-[#1699A4]/10 hover:text-[#1699A4] lg:hidden"
+          aria-label="Toggle navigation menu"
         >
           {open ? (
-            <X size={23} />
+            <X size={26} />
           ) : (
-            <Menu size={23} />
+            <Menu size={26} />
           )}
         </button>
       </div>
@@ -97,39 +139,48 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="border-t border-slate-100 bg-white px-5 py-6 shadow-lg lg:hidden">
+        <div className="border-t border-slate-200 bg-white lg:hidden">
 
-          <div className="mx-auto flex max-w-7xl flex-col gap-1">
+          <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
-            {links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-3.5 font-semibold text-slate-700 transition hover:bg-[#1699A4]/5 hover:text-[#1699A4]"
-              >
-                {link.label}
-              </a>
-            ))}
+            {/* MOBILE LINKS */}
+            <nav className="space-y-1">
+
+              {links.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={closeMobileMenu}
+                  className="block rounded-xl px-4 py-3 font-medium text-slate-700 transition hover:bg-[#1699A4]/5 hover:text-[#1699A4]"
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+            </nav>
 
 
-            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-5">
+            {/* MOBILE ACTIONS */}
+            <div className="mt-5 grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-2">
 
-              <a
-                href="/login"
-                onClick={() => setOpen(false)}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-center text-sm font-bold text-[#071A3D] transition hover:border-[#1699A4]"
+              <Link
+                to="/login"
+                onClick={closeMobileMenu}
+                className="flex items-center justify-center rounded-xl border border-[#1699A4] px-4 py-3 font-semibold text-[#147C91] transition hover:bg-[#1699A4]/5"
               >
                 Sign in
-              </a>
+              </Link>
 
-              <a
-                href="/register"
-                onClick={() => setOpen(false)}
-                className="rounded-xl bg-[#1699A4] px-4 py-3 text-center text-sm font-bold text-white transition hover:bg-[#147C91]"
+
+              <Link
+                to="/register"
+                onClick={closeMobileMenu}
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#1699A4] px-4 py-3 font-semibold text-white transition hover:bg-[#147C91]"
               >
-                Get started
-              </a>
+                Get job alerts
+
+                <ArrowRight size={17} />
+              </Link>
             </div>
           </div>
         </div>

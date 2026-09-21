@@ -9,6 +9,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-950 text-white">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 lg:px-8">
+
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
 
           {/* Brand */}
@@ -28,7 +29,16 @@ export default function Footer() {
               machine learning, AI research and the technologies
               shaping the future.
             </p>
+
+            {/* GuruCrafts Agency */}
+            <p className="mt-4 text-xs font-medium text-slate-500">
+              A product of{" "}
+              <span className="font-bold text-[#1699A4]">
+                GuruCrafts Agency
+              </span>
+            </p>
           </div>
+
 
           {/* Explore */}
           <div>
@@ -38,34 +48,35 @@ export default function Footer() {
 
             <div className="space-y-3 text-sm text-slate-400">
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/jobs"
               >
                 Browse Jobs
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/companies"
               >
                 Companies
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/jobs?remote=true"
               >
                 Remote Jobs
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/jobs?category=ai-research"
               >
                 AI Research Jobs
               </a>
             </div>
           </div>
+
 
           {/* Resources */}
           <div>
@@ -75,34 +86,35 @@ export default function Footer() {
 
             <div className="space-y-3 text-sm text-slate-400">
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/resources"
               >
                 Career Resources
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/alerts"
               >
                 Job Alerts
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/about"
               >
                 About AI Roles
               </a>
 
               <a
-                className="block transition hover:text-white"
+                className="block transition hover:text-[#1699A4]"
                 href="/contact"
               >
                 Contact
               </a>
             </div>
           </div>
+
 
           {/* CTA */}
           <div>
@@ -117,7 +129,7 @@ export default function Footer() {
 
             <a
               href="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-indigo-500"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#1699A4] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#147C91]"
             >
               Get Job Alerts
 
@@ -131,11 +143,23 @@ export default function Footer() {
           </div>
         </div>
 
+
         {/* Bottom */}
         <div className="mt-12 flex flex-col gap-4 border-t border-slate-800 pt-7 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} AI Roles. All rights reserved.
-          </p>
+
+          <div>
+            <p>
+              © {new Date().getFullYear()} AI Roles. All rights reserved.
+            </p>
+
+            <p className="mt-1 text-xs text-slate-600">
+              A product of{" "}
+              <span className="font-semibold text-slate-400">
+                GuruCrafts Agency
+              </span>
+            </p>
+          </div>
+
 
           <div className="flex flex-wrap gap-5">
             <a
