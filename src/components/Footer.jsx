@@ -33,9 +33,16 @@ export default function Footer() {
             {/* GuruCrafts Agency */}
             <p className="mt-4 text-xs font-medium text-slate-500">
               A product of{" "}
-              <span className="font-bold text-[#1699A4]">
+              <a
+    href="https://gurucrafts.agency/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="font-bold text-[#F4C515] transition hover:text-white"
+  >
+    <span className="font-semibold text-[#1699A4]">
                 GuruCrafts Agency
               </span>
+  </a>
             </p>
           </div>
 
@@ -154,9 +161,16 @@ export default function Footer() {
 
             <p className="mt-1 text-xs text-slate-600">
               A product of{" "}
-              <span className="font-semibold text-slate-400">
+              <a
+    href="https://gurucrafts.agency/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="font-bold text-[#F4C515] transition hover:text-white"
+  >
+    <span className="font-semibold text-slate-400">
                 GuruCrafts Agency
               </span>
+  </a>
             </p>
           </div>
 
