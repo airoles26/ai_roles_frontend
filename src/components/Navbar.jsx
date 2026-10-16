@@ -75,14 +75,14 @@ export default function Navbar() {
         {/* Desktop Actions */}
         <div className="hidden items-center gap-2 lg:flex">
           <Link
-            to="/login"
+            to="/signin"
             className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#5145E5] transition-colors duration-200 hover:bg-[#5145E5]/5"
           >
             Sign in
           </Link>
 
           <Link
-            to="/register"
+            to="/signup"
             className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#5145E5] via-[#4385F5] to-[#109589] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#5145E5]/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#5145E5]/25"
           >
             Get job alerts
