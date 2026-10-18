@@ -1,185 +1,171 @@
-import {
-  MapPin,
-  Clock3,
-  Building2,
-  ArrowUpRight,
-  Banknote,
-  Sparkles,
-} from "lucide-react";
 import { Link } from "react-router-dom";
+import { BadgeCheck, Bot, MapPin } from "lucide-react";
 
-function formatDate(date) {
-  if (!date) return "Recently";
+import { DISPLAY_FONT } from "./Navbar";
 
-  const parsed = new Date(date);
+/*
+ * Expected job fields (all optional except title and id/slug):
+ *   title, slug, id
+ *   company: { name, logo } | company_name, company_logo
+ *   location, work_type: "remote" | "hybrid" | "onsite"
+ *   salary_min, salary_max, salary_currency
+ *   source_ats: "greenhouse" | "lever" | "workday" | "ashby" | "smartrecruiters" | "direct"
+ *   last_verified_at (ISO date)
+ *   skills: ["Python", ...] or [{ name }]
+ *   match_score (0-100, only for signed-in users with a profile)
+ *   auto_apply_eligible (boolean)
+ */
 
-  if (Number.isNaN(parsed.getTime())) {
-    return "Recently";
-  }
+const WORK_TYPE_LABELS = { remote: "Remote", hybrid: "Hybrid", onsite: "On-site" };
+const ATS_LABELS = {
+  greenhouse: "Greenhouse",
+  lever: "Lever",
+  workday: "Workday",
+  ashby: "Ashby",
+  smartrecruiters: "SmartRecruiters",
+  direct: "Direct post",
+};
 
-  const diff = Date.now() - parsed.getTime();
-  const days = Math.floor(diff / 86400000);
-
-  if (days <= 0) return "Today";
-  if (days === 1) return "1 day ago";
-  if (days < 30) return `${days} days ago`;
-
-  return parsed.toLocaleDateString();
+export function timeAgo(value) {
+  if (!value) return null;
+  const minutes = Math.round((Date.now() - new Date(value).getTime()) / 60000);
+  if (Number.isNaN(minutes) || minutes < 0) return null;
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} h ago`;
+  const days = Math.round(hours / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-function salary(job) {
-  if (
-    job.salary_min == null ||
-    job.salary_min === ""
-  ) {
-    if (job.salary_max == null || job.salary_max === "") {
-      return null;
-    }
-  }
-
-  const currency = job.currency || "USD";
-
-  const format = (value) => Number(value).toLocaleString();
-
-  const hasMin =
-    job.salary_min != null && job.salary_min !== "";
-  const hasMax =
-    job.salary_max != null && job.salary_max !== "";
-
-  if (hasMin && hasMax) {
-    return `${currency} ${format(job.salary_min)} - ${format(
-      job.salary_max
-    )}`;
-  }
-
-  if (hasMin) {
-    return `${currency} ${format(job.salary_min)}+`;
-  }
-
-  if (hasMax) {
-    return `Up to ${currency} ${format(job.salary_max)}`;
-  }
-
+function formatSalary(min, max, currency = "USD") {
+  const fmt = (n) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(Number(n));
+  if (min && max) return `${fmt(min)} to ${fmt(max)}`;
+  if (min) return `From ${fmt(min)}`;
+  if (max) return `Up to ${fmt(max)}`;
   return null;
 }
 
-export default function JobCard({ job }) {
-  const salaryText = salary(job);
+function MatchRing({ score }) {
+  const r = 20;
+  const c = 2 * Math.PI * r;
+  const strong = score >= 80;
+  return (
+    <div className="flex items-center gap-2.5" title="How well this role fits your profile">
+      <svg width="50" height="50" viewBox="0 0 50 50" aria-hidden="true">
+        <circle cx="25" cy="25" r={r} fill="none" stroke="#E2E8F0" strokeWidth="5" />
+        <circle
+          cx="25" cy="25" r={r} fill="none"
+          stroke={strong ? "#109589" : "#5145E5"} strokeWidth="5" strokeLinecap="round"
+          strokeDasharray={`${(score / 100) * c} ${c}`}
+          transform="rotate(-90 25 25)"
+        />
+        <text x="25" y="29.5" textAnchor="middle" className="fill-[#10162F] text-[13px] font-bold">
+          {Math.round(score)}
+        </text>
+      </svg>
+      <span className="text-xs font-semibold leading-4 text-slate-500">
+        % match
+      </span>
+    </div>
+  );
+}
+
+export default function JobCard({ job, onAutoApply, autoApplyBusy = false, subscribed = false }) {
+  const companyName =
+    (typeof job.company === "object" ? job.company?.name : null) || job.company_name ||
+    (typeof job.company === "string" ? job.company : "");
+  const logo = (typeof job.company === "object" ? job.company?.logo : null) || job.company_logo;
+  const workType = WORK_TYPE_LABELS[job.work_type] || (job.remote ? "Remote" : null);
+  const place = [job.location, workType && job.location !== workType ? workType : null]
+    .filter(Boolean).join(", ") || workType;
+  const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency || "USD");
+  const ats = ATS_LABELS[job.source_ats] || job.source_ats;
+  const verified = timeAgo(job.last_verified_at);
+  const skills = (job.skills || []).map((s) => (typeof s === "string" ? s : s?.name)).filter(Boolean);
+  const hasScore = typeof job.match_score === "number";
+  const href = `/jobs/${job.slug || job.id}`;
 
   return (
-    <Link
-      to={`/jobs/${job.slug}`}
-      className="group relative block overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#5145E5]/30 hover:shadow-xl hover:shadow-[#5145E5]/[0.08] sm:p-6"
-    >
-      {/* Subtle brand accent */}
-      <div className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#5145E5] via-[#4385F5] to-[#109589] transition-transform duration-300 group-hover:scale-x-100" />
-
-      <div className="flex items-start gap-4">
-        {/* Company Logo */}
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition-colors group-hover:border-[#5145E5]/20 group-hover:bg-[#5145E5]/5 sm:h-14 sm:w-14">
-          {job.company?.logo_url ? (
-            <img
-              src={job.company.logo_url}
-              alt={`${job.company.name || "Company"} logo`}
-              loading="lazy"
-              className="h-full w-full object-contain p-1.5"
-            />
-          ) : (
-            <Building2
-              size={22}
-              className="text-[#5145E5]"
-              aria-hidden="true"
-            />
-          )}
+    <article className="group relative rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-[#5145E5]/40 sm:p-6">
+      <div className="flex gap-4">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F8FAFC] text-lg font-bold text-[#5145E5]">
+          {logo ? <img src={logo} alt="" className="h-full w-full object-contain" /> : (companyName || job.title).charAt(0)}
         </div>
 
-        {/* Job Details */}
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
             <div className="min-w-0">
-              <p className="mb-1 truncate text-sm font-semibold text-[#109589]">
-                {job.company?.name || "Company"}
-              </p>
-
-              <h3 className="text-base font-extrabold leading-snug text-slate-950 transition-colors group-hover:text-[#5145E5] sm:text-lg">
-                {job.title}
+              <h3 className={`${DISPLAY_FONT} text-lg font-bold leading-snug text-[#10162F] sm:text-xl`}>
+                {/* Stretched link: the whole card opens the job, buttons stay clickable */}
+                <Link to={href} className="after:absolute after:inset-0 after:rounded-2xl focus:outline-none focus-visible:underline">
+                  {job.title}
+                </Link>
               </h3>
+              <p className="mt-1 text-sm font-semibold text-slate-600">{companyName}</p>
             </div>
-
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-all duration-200 group-hover:bg-[#5145E5]/10 group-hover:text-[#5145E5]">
-              <ArrowUpRight
-                size={18}
-                className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              />
-            </div>
+            {hasScore && <MatchRing score={job.match_score} />}
           </div>
 
-          {/* Location, Date and Salary */}
-          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2.5 text-sm text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <MapPin
-                size={15}
-                className="shrink-0 text-[#5145E5]"
-              />
-              <span>
-                {job.remote
-                  ? "Remote"
-                  : job.location || "Location flexible"}
-              </span>
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <Clock3
-                size={15}
-                className="shrink-0 text-[#4385F5]"
-              />
-              {formatDate(job.posted_at)}
-            </span>
-
-            {salaryText && (
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-slate-600">
+            {place && (
               <span className="flex items-center gap-1.5">
-                <Banknote
-                  size={15}
-                  className="shrink-0 text-[#109589]"
-                />
-                <span className="font-medium text-slate-600">
-                  {salaryText}
+                <MapPin size={15} className="text-[#109589]" />
+                {place}
+              </span>
+            )}
+            {salary && <span className="font-semibold text-[#10162F]">{salary}</span>}
+          </div>
+
+          {skills.length > 0 && (
+            <ul className="mt-4 flex flex-wrap gap-1.5">
+              {skills.slice(0, 6).map((s) => (
+                <li key={s} className="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                  {s}
+                </li>
+              ))}
+              {skills.length > 6 && (
+                <li className="px-1 py-1 text-xs font-semibold text-slate-400">+{skills.length - 6} more</li>
+              )}
+            </ul>
+          )}
+
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+              {ats && <span>Apply via {ats}</span>}
+              {verified && (
+                <span className="flex items-center gap-1 font-semibold text-[#087F78]">
+                  <BadgeCheck size={14} />
+                  Verified open {verified}
                 </span>
-              </span>
-            )}
-          </div>
+              )}
+            </p>
 
-          {/* Category and Skills */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            {job.category?.name && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#5145E5]/10 bg-[#5145E5]/[0.07] px-3 py-1 text-xs font-bold text-[#5145E5]">
-                <Sparkles size={12} />
-                {job.category.name}
-              </span>
-            )}
-
-            {job.skills?.slice(0, 3).map((skill) => (
-              <span
-                key={skill.id || skill.slug || skill.name}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 transition-colors group-hover:border-[#109589]/15"
+            {job.auto_apply_eligible && onAutoApply ? (
+              <div className="relative z-10 flex items-center gap-3">
+                {!subscribed && <span className="text-xs text-slate-500">$9.99 for 7 days</span>}
+                <button
+                  type="button"
+                  onClick={() => onAutoApply(job)}
+                  disabled={autoApplyBusy}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#5145E5] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60"
+                >
+                  <Bot size={16} />
+                  {autoApplyBusy ? "Opening checkout…" : "Auto-apply with Copilot"}
+                </button>
+              </div>
+            ) : (
+              <Link
+                to={href}
+                className="relative z-10 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-[#10162F] transition hover:border-[#5145E5]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
               >
-                {skill.name}
-              </span>
-            ))}
-          </div>
-
-          {/* Bottom accent */}
-          <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-            <span className="text-xs font-medium text-slate-400">
-              Explore opportunity
-            </span>
-
-            <span className="bg-gradient-to-r from-[#5145E5] to-[#109589] bg-clip-text text-xs font-bold text-transparent">
-              View details
-            </span>
+                View job
+              </Link>
+            )}
           </div>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }

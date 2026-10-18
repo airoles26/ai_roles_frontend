@@ -1,163 +1,133 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
-import logo from "../assets/logo.png";
+import { startCheckout } from "./checkout/Checkout";
+
+export const DISPLAY_FONT =
+  "font-['Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif]";
+
+const NAV_LINKS = [
+  { label: "Find jobs", to: "/jobs" },
+  { label: "Quantum Talent Copilot", to: "/copilot" },
+  { label: "Enterprise sourcing", to: "/enterprise" },
+  { label: "Pricing", to: "/#pricing" },
+  { label: "How QAOA works", to: "/#how-it-works" },
+];
+
+/** Quantum "Q" mark: an orbit ring with a qubit dot, indigo to neon teal. */
+export function QuantahireMark({ size = 32 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+      <defs>
+        <linearGradient id="qh-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#5145E5" />
+          <stop offset="100%" stopColor="#14E0C8" />
+        </linearGradient>
+      </defs>
+      <circle cx="15" cy="15" r="10" fill="none" stroke="url(#qh-grad)" strokeWidth="3.2" />
+      <ellipse
+        cx="15" cy="15" rx="13" ry="4.6"
+        fill="none" stroke="url(#qh-grad)" strokeWidth="1.2" opacity="0.55"
+        transform="rotate(-35 15 15)"
+      />
+      <path d="M20.5 20.5 L27 27" stroke="url(#qh-grad)" strokeWidth="3.2" strokeLinecap="round" />
+      <circle cx="15" cy="15" r="2.6" fill="#14E0C8" />
+    </svg>
+  );
+}
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const colors = {
-    purple: "#5145E5",
-    blue: "#4385F5",
-    teal: "#109589",
-    darkTeal: "#087F78",
-    navy: "#172554",
+  const startTrial = async () => {
+    setBusy(true);
+    try {
+      await startCheckout("trial", navigate);
+    } catch {
+      navigate("/register?plan=trial");
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const links = [
-    { label: "Jobs", href: "/jobs" },
-    { label: "Companies", href: "/companies" },
-    { label: "Remote Jobs", href: "/jobs?remote=true" },
-    { label: "Career Resources", href: "/resources" },
-  ];
-
-  const closeMobileMenu = () => setOpen(false);
-
-  const navLinkClass = ({ isActive }) =>
-    `rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
-      isActive
-        ? "bg-[#5145E5]/10 text-[#5145E5]"
-        : "text-slate-700 hover:bg-[#109589]/10 hover:text-[#109589]"
+  const linkClass = ({ isActive }) =>
+    `rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] ${
+      isActive ? "text-[#5145E5]" : "text-slate-600 hover:text-[#10162F]"
     }`;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-900/[0.02] backdrop-blur-xl">
-      {/* Main Navbar */}
-      <div className="mx-auto flex h-[88px] max-w-7xl items-center justify-between px-4 sm:h-[96px] sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link
-          to="/"
-          onClick={closeMobileMenu}
-          className="flex shrink-0 items-center"
-          aria-label="Quantahire home"
-        >
-          <img
-            src={logo}
-            alt="Quantahire"
-            className="h-[64px] w-auto max-w-[230px] object-contain sm:h-[76px] sm:max-w-[300px] lg:h-[82px] lg:max-w-[360px]"
-          />
+    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-2.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]">
+          <QuantahireMark />
+          <span className={`${DISPLAY_FONT} text-xl font-bold tracking-tight text-[#10162F]`}>
+            Quantahire
+          </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {links.map((link) =>
-            link.href.includes("?") ? (
-              <Link
-                key={link.label}
-                to={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:bg-[#109589]/10 hover:text-[#109589]"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <NavLink
-                key={link.label}
-                to={link.href}
-                className={navLinkClass}
-              >
-                {link.label}
-              </NavLink>
-            )
-          )}
-        </nav>
-
-        {/* Desktop Actions */}
-        <div className="hidden items-center gap-2 lg:flex">
-          <Link
-            to="/signin"
-            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#5145E5] transition-colors duration-200 hover:bg-[#5145E5]/5"
-          >
-            Sign in
-          </Link>
-
-          <Link
-            to="/signup"
-            className="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#5145E5] via-[#4385F5] to-[#109589] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#5145E5]/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#5145E5]/25"
-          >
-            Get job alerts
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-200 group-hover:translate-x-1"
-            />
-          </Link>
+        <div className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((link) => (
+            <NavLink key={link.label} to={link.to} className={linkClass} end>
+              {link.label}
+            </NavLink>
+          ))}
         </div>
 
-        {/* Mobile Menu Button */}
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            to="/signin"
+            className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:text-[#10162F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+          >
+            Log in
+          </Link>
+          <button
+            type="button"
+            onClick={startTrial}
+            disabled={busy}
+            className="rounded-xl bg-[#5145E5] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60"
+          >
+            {busy ? "Opening checkout…" : "Start 7-day trial ($9.99)"}
+          </button>
+        </div>
+
         <button
           type="button"
-          onClick={() => setOpen((previous) => !previous)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-[#5145E5] transition-colors hover:bg-[#5145E5]/10 lg:hidden"
-          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+          onClick={() => setOpen((v) => !v)}
+          className="rounded-lg p-2 text-[#10162F] lg:hidden"
           aria-expanded={open}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
-          {open ? <X size={26} /> : <Menu size={26} />}
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
-      </div>
+      </nav>
 
-      {/* Mobile Menu */}
       {open && (
-        <div className="border-t border-slate-200 bg-white lg:hidden">
-          <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
-            <nav className="space-y-1">
-              {links.map((link) =>
-                link.href.includes("?") ? (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    onClick={closeMobileMenu}
-                    className="block rounded-xl px-4 py-3 font-medium text-slate-700 transition-colors hover:bg-[#109589]/10 hover:text-[#109589]"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <NavLink
-                    key={link.label}
-                    to={link.href}
-                    onClick={closeMobileMenu}
-                    className={({ isActive }) =>
-                      `block rounded-xl px-4 py-3 font-medium transition-colors ${
-                        isActive
-                          ? "bg-[#5145E5]/10 text-[#5145E5]"
-                          : "text-slate-700 hover:bg-[#109589]/10 hover:text-[#109589]"
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                )
-              )}
-            </nav>
-
-            {/* Mobile Actions */}
-            <div className="mt-5 grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-2">
-              <Link
-                to="/login"
-                onClick={closeMobileMenu}
-                className="flex items-center justify-center rounded-xl border border-[#5145E5]/30 px-4 py-3 font-semibold text-[#5145E5] transition-colors hover:bg-[#5145E5]/5"
-              >
-                Sign in
-              </Link>
-
-              <Link
-                to="/register"
-                onClick={closeMobileMenu}
-                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-4 py-3 font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
-              >
-                Get job alerts
-                <ArrowRight size={17} />
-              </Link>
-            </div>
+        <div className="border-t border-slate-200 bg-white px-5 pb-5 pt-2 lg:hidden">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              to={link.to}
+              onClick={() => setOpen(false)}
+              className="block rounded-lg px-2 py-3 text-base font-semibold text-slate-700"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <div className="mt-3 grid gap-2">
+            <Link to="/login" className="rounded-xl border border-slate-200 px-4 py-3 text-center font-semibold">
+              Log in
+            </Link>
+            <button
+              type="button"
+              onClick={startTrial}
+              disabled={busy}
+              className="rounded-xl bg-[#5145E5] px-4 py-3 font-bold text-white disabled:opacity-60"
+            >
+              {busy ? "Opening checkout…" : "Start 7-day trial ($9.99)"}
+            </button>
           </div>
         </div>
       )}

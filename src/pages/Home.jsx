@@ -1,698 +1,611 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  ArrowRight,
-  Search,
-  MapPin,
-  Sparkles,
-  BrainCircuit,
-  Bot,
-  ScanEye,
-  Database,
-  ShieldCheck,
-  BriefcaseBusiness,
-  Building2,
-  Globe2,
-  Zap,
-  CheckCircle2,
-  Code2,
-  ChartNoAxesCombined,
-  GraduationCap,
-  Truck,
-  HeartPulse,
-  Landmark,
-  Cpu,
-  BellRing,
   Atom,
+  BadgeCheck,
+  Bot,
+  Check,
+  ChevronDown,
+  CreditCard,
+  LayoutDashboard,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Upload,
 } from "lucide-react";
 
-import Navbar from "../components/Navbar";
+import Navbar, { DISPLAY_FONT } from "../components/Navbar";
 import Footer from "../components/Footer";
-import JobCard from "../components/JobCard";
 import api from "../api/api";
+import { startCheckout } from "../components/checkout/Checkout";
 
-const BRAND = {
-  purple: "#5145E5",
-  blue: "#4385F5",
-  teal: "#109589",
-  darkTeal: "#087F78",
-  navy: "#10162F",
-  background: "#F8FAFC",
-};
+/* ------------------------------------------------------------------ */
+/* Content                                                             */
+/* ------------------------------------------------------------------ */
 
-const fallbackCategories = [
+const QUICK_TAGS = [
+  { label: "Remote only", params: { remote: "true" } },
+  { label: "Quantum & AI", params: { search: "AI" } },
+  { label: "$100k+", params: { salary_min: "100000" } },
+  { label: "Auto-apply ready", params: { auto_apply: "true" } },
+];
+
+const STACK = ["IBM Qiskit", "OpenAI GPT-4o", "Playwright", "Paystack", "Vercel"];
+
+const PILLARS = [
   {
-    name: "Software & Technology",
-    slug: "software-technology",
-    description: "Software engineering, web, mobile and cloud roles.",
-    icon: Code2,
+    icon: Atom,
+    title: "IBM Qiskit QAOA engine",
+    badge: "Built with IBM Qiskit",
+    body:
+      "Keyword search ranks jobs one at a time. We score every role against your profile, then frame picking the best set of roles as a QUBO optimisation problem and solve it with QAOA, a quantum algorithm built with IBM Qiskit. Every quantum result is checked against a classical solver.",
   },
   {
-    name: "Artificial Intelligence",
-    slug: "artificial-intelligence",
-    description: "Machine learning, generative AI and AI research.",
-    icon: BrainCircuit,
+    icon: Bot,
+    title: "Quantum Talent AI Copilot",
+    badge: "1-click auto-apply",
+    body:
+      "Stop filling out the same ATS forms. The Copilot tailors your resume for each role and submits applications in the background while you get on with your day.",
   },
   {
-    name: "Finance & Banking",
-    slug: "finance-banking",
-    description: "Fintech, accounting, investment and banking careers.",
-    icon: Landmark,
+    icon: ShieldCheck,
+    title: "Ghost-job protection",
+    badge: "Re-checked daily",
+    body:
+      "Every listing is re-checked against the employer's own ATS each day. When a company closes a role, we remove it from Quantahire.",
   },
   {
-    name: "Engineering",
-    slug: "engineering",
-    description: "Engineering, infrastructure and technical careers.",
-    icon: Cpu,
-  },
-  {
-    name: "Healthcare",
-    slug: "healthcare",
-    description: "Healthcare, medical research and health technology.",
-    icon: HeartPulse,
-  },
-  {
-    name: "Logistics & Operations",
-    slug: "logistics-operations",
-    description: "Supply chain, logistics and operations management.",
-    icon: Truck,
+    icon: CreditCard,
+    title: "Pay the way you already pay",
+    badge: "Secured by Paystack",
+    body:
+      "Pay by card, M-Pesa or mobile money through Paystack's secure checkout. No US bank card needed.",
   },
 ];
 
-const categoryIcons = [
-  { keywords: ["software", "developer", "technology", "programming", "web"], icon: Code2 },
-  { keywords: ["machine", "artificial intelligence", "ai", "ml"], icon: BrainCircuit },
-  { keywords: ["finance", "bank", "account", "investment"], icon: Landmark },
-  { keywords: ["engineer", "engineering"], icon: Cpu },
-  { keywords: ["health", "medical", "clinical"], icon: HeartPulse },
-  { keywords: ["logistic", "supply chain", "operation"], icon: Truck },
-  { keywords: ["data", "analytics", "research"], icon: ChartNoAxesCombined },
-  { keywords: ["design", "creative", "media"], icon: Sparkles },
-  { keywords: ["education", "teaching", "training"], icon: GraduationCap },
-  { keywords: ["security", "safety"], icon: ShieldCheck },
-  { keywords: ["cloud", "infrastructure", "devops"], icon: Database },
-  { keywords: ["vision", "imaging"], icon: ScanEye },
-  { keywords: ["generative", "llm", "language model"], icon: Bot },
+const STEPS = [
+  {
+    icon: Upload,
+    title: "Upload your profile",
+    body: "We read your CV and turn your experience, skills and goals into a profile we can match against every open role.",
+  },
+  {
+    icon: Atom,
+    title: "Run the QAOA match",
+    body: "We shortlist your strongest roles, then QAOA picks the best combination for your salary, location and skills, not just the top keyword hits.",
+  },
+  {
+    icon: Bot,
+    title: "Let the Copilot apply",
+    body: "The Copilot tailors your resume to each job's ATS and submits through Workday, Greenhouse and Lever.",
+  },
+  {
+    icon: LayoutDashboard,
+    title: "Track every application",
+    body: "Follow each role on your board from Applied to Under review, Interview and Offer.",
+  },
 ];
+
+const PLANS = [
+  {
+    id: "trial",
+    name: "Quantum Copilot 7-day trial",
+    price: "$9.99",
+    period: "for 7 days",
+    audience: "For active job seekers who want auto-apply now.",
+    features: ["100 auto-apply credits", "AI ATS resume tailor", "QAOA compatibility scoring", "Application board sync"],
+    cta: "Start 7-day trial ($9.99)",
+    note: "Renews at $39.99/month on day 8 unless you cancel.",
+    action: "checkout",
+  },
+  {
+    id: "pro",
+    name: "Quantum Copilot Monthly Pro",
+    price: "$39.99",
+    period: "per month",
+    audience: "For career changers who want applications going out continuously.",
+    features: ["Unlimited auto-apply credits", "Unlimited resume customisations", "Priority quantum match runs", "Screenshot proof of every application"],
+    cta: "Subscribe to Pro ($39.99/mo)",
+    note: "Cancel anytime from your account.",
+    action: "checkout",
+    featured: true,
+  },
+  {
+    id: "employer_post",
+    name: "Direct employer job post",
+    price: "$99",
+    period: "per post, 30 days",
+    audience: "For companies hiring tech and AI talent.",
+    features: ["30-day verified listing", "Automated listing verification", "AI match recommendations", "Direct ATS referral pipeline"],
+    cta: "Post a job ($99)",
+    action: "link",
+    to: "/employers/post-job",
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise quantum sourcing",
+    price: "$1,500",
+    period: "per month",
+    audience: "For corporate talent acquisition teams.",
+    features: ["Batch QAOA applicant shortlisting", "Custom matching criteria", "Dedicated account manager", "Unlimited applicant exports"],
+    cta: "Contact enterprise sales",
+    action: "link",
+    to: "/enterprise#contact",
+  },
+];
+
+const FAQS = [
+  {
+    q: "How does quantum matching work compared to classical job boards?",
+    a: "Most job boards rank roles by keyword overlap, one at a time. Quantahire first scores each role against your profile with AI, then frames choosing the best set of roles as an optimisation problem and solves it with QAOA, a quantum algorithm built with IBM Qiskit. Today's quantum hardware handles small problems, so we run it on your shortlisted roles, and we check every result against a classical solver so you always get the best answer either method finds.",
+  },
+  {
+    q: "How do you keep ghost jobs off Quantahire?",
+    a: "We re-check every listing against the employer's own ATS each day and remove roles that have closed. If you ever find one that slipped through, report it from the job page and we'll remove it.",
+  },
+  {
+    q: "How does the AI Copilot auto-apply to jobs?",
+    a: "The Copilot opens the employer's application page, tailors your resume to the job's ATS requirements, fills in the form and submits it for you. You'll see each application on your board, with a screenshot as proof.",
+  },
+  {
+    q: "What happens after the 7-day trial?",
+    a: "Your plan renews at $39.99/month on day 8. Cancel anytime before then from your account settings and you won't be charged again.",
+  },
+];
+
+/* Example data for the hero illustration (not live data). */
+const EXAMPLE_ROLES = [
+  { title: "Backend Engineer, Django", meta: "Fintech, Nairobi, hybrid", score: 92, pick: true },
+  { title: "Platform Engineer", meta: "Payments, remote", score: 88, pick: true },
+  { title: "Python Developer", meta: "Payments, remote", score: 86, pick: false, reason: "Too similar to Platform Engineer" },
+  { title: "Data Engineer", meta: "Logistics, Kigali", score: 79, pick: true },
+  { title: "Full-stack Developer", meta: "E-commerce, Lagos", score: 64, pick: false, reason: "Below your salary range" },
+];
+
+/* ------------------------------------------------------------------ */
+/* Hero illustration: one example match run, animated once on load      */
+/* ------------------------------------------------------------------ */
+
+function MatchRunPreview() {
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setDone(true);
+      return undefined;
+    }
+    const t = setTimeout(() => setDone(true), 1600);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <figure className="relative rounded-[28px] bg-[#10162F] p-5 text-white shadow-[0_30px_80px_-30px_rgba(81,69,229,0.55)] sm:p-7">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold text-slate-400">Example match run</p>
+          <p className={`${DISPLAY_FONT} mt-1 text-lg font-bold`}>Your best 3 roles out of 5</p>
+        </div>
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-colors duration-500 ${
+            done ? "bg-[#14E0C8]/15 text-[#14E0C8]" : "bg-white/10 text-slate-300"
+          }`}
+          aria-live="polite"
+        >
+          <span className={`h-1.5 w-1.5 rounded-full ${done ? "bg-[#14E0C8]" : "animate-pulse bg-slate-300"}`} />
+          {done ? "Optimised" : "Running QAOA…"}
+        </span>
+      </div>
+
+      <ul className="mt-6 space-y-2.5">
+        {EXAMPLE_ROLES.map((role) => {
+          const selected = done && role.pick;
+          const skipped = done && !role.pick;
+          return (
+            <li
+              key={role.title}
+              className={`rounded-2xl border px-4 py-3 transition-all duration-500 ${
+                selected
+                  ? "border-[#14E0C8]/50 bg-[#14E0C8]/[0.08]"
+                  : skipped
+                  ? "border-white/5 bg-white/[0.02] opacity-55"
+                  : "border-white/10 bg-white/[0.04]"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">{role.title}</p>
+                  <p className="mt-0.5 truncate text-xs text-slate-400">
+                    {skipped ? role.reason : role.meta}
+                  </p>
+                </div>
+                <div className="w-24 shrink-0">
+                  <div className="flex justify-end text-sm font-bold tabular-nums">{role.score}</div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#5145E5] to-[#14E0C8]"
+                      style={{ width: `${role.score}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+                  {selected && <Check size={18} className="text-[#14E0C8]" aria-label="Selected" />}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <figcaption className="mt-5 flex items-start gap-2 text-xs leading-5 text-slate-400">
+        <BadgeCheck size={16} className="mt-0.5 shrink-0 text-[#14E0C8]" />
+        QAOA skips near-duplicate roles and roles outside your constraints, then we confirm the
+        pick against a classical solver.
+      </figcaption>
+    </figure>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Page                                                                */
+/* ------------------------------------------------------------------ */
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [jobs, setJobs] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [jobCount, setJobCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [jobCount, setJobCount] = useState(null);
   const [search, setSearch] = useState("");
-  const [location, setLocation] = useState("");
+  const [place, setPlace] = useState("");
+  const [busyPlan, setBusyPlan] = useState(null);
+  const [checkoutError, setCheckoutError] = useState("");
 
+  // Live job count for the hero proof bar and secondary CTA.
   useEffect(() => {
     let cancelled = false;
-
-    const loadHome = async () => {
-      try {
-        setLoading(true);
-
-        const [jobsResponse, categoriesResponse] = await Promise.all([
-          api.get("/jobs/?ordering=-posted_at"),
-          api.get("/categories/"),
-        ]);
-
+    api
+      .get("/jobs/", { params: { page_size: 1 } })
+      .then(({ data }) => {
         if (cancelled) return;
-
-        const jobsData = jobsResponse.data;
-        const allJobs = Array.isArray(jobsData)
-          ? jobsData
-          : jobsData?.results || [];
-
-        setJobs(allJobs.slice(0, 6));
-        setJobCount(
-          typeof jobsData?.count === "number"
-            ? jobsData.count
-            : allJobs.length
-        );
-
-        const categoriesData = categoriesResponse.data;
-        const allCategories = Array.isArray(categoriesData)
-          ? categoriesData
-          : categoriesData?.results || [];
-
-        setCategories(allCategories);
-      } catch (error) {
-        if (!cancelled) {
-          console.error("Failed loading Quantahire homepage:", error);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadHome();
-
+        const count = typeof data?.count === "number" ? data.count : Array.isArray(data) ? data.length : null;
+        setJobCount(count);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const handleSearch = (event) => {
-    event.preventDefault();
+  // Make "/#pricing" and "/#how-it-works" nav links scroll to their section.
+  useEffect(() => {
+    if (!location.hash) return;
+    document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+  }, [location.hash]);
 
-    const params = new URLSearchParams();
+  const jobsLabel = jobCount ? `${jobCount.toLocaleString()}` : null;
 
-    if (search.trim()) {
-      params.set("search", search.trim());
-    }
-
-    if (location.trim()) {
-      params.set("location", location.trim());
-    }
-
-    navigate(`/jobs${params.toString() ? `?${params.toString()}` : ""}`);
+  const goToJobs = (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    navigate(`/jobs${qs ? `?${qs}` : ""}`);
   };
 
-  const displayCategories =
-    categories.length > 0
-      ? categories.slice(0, 6).map((category) => ({
-          ...category,
-          icon: category.icon || getCategoryIcon(category.name),
-        }))
-      : fallbackCategories;
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const params = {};
+    if (search.trim()) params.search = search.trim();
+    if (place.trim()) params.location = place.trim();
+    goToJobs(params);
+  };
 
-  function getCategoryIcon(name = "") {
-    const normalized = name.toLowerCase();
-
-    return (
-      categoryIcons.find(({ keywords }) =>
-        keywords.some((keyword) => normalized.includes(keyword))
-      )?.icon || BriefcaseBusiness
-    );
-  }
-
-  const stats = [
-    {
-      icon: BriefcaseBusiness,
-      value: jobCount > 0 ? jobCount.toLocaleString() : "Explore",
-      label: "Job opportunities",
-    },
-    {
-      icon: Building2,
-      value: "Global",
-      label: "Hiring companies",
-    },
-    {
-      icon: Globe2,
-      value: "Worldwide",
-      label: "Career opportunities",
-    },
-    {
-      icon: Zap,
-      value: "Discover",
-      label: "Your next move",
-    },
-  ];
-
-  const benefits = [
-    {
-      title: "Opportunities across industries",
-      description:
-        "Explore careers in technology, finance, engineering, healthcare, business and more.",
-    },
-    {
-      title: "Search that fits your goals",
-      description:
-        "Find roles using job titles, skills, companies and locations.",
-    },
-    {
-      title: "One place to explore",
-      description:
-        "Discover opportunities gathered from supported company hiring sources.",
-    },
-  ];
+  const checkout = async (plan) => {
+    setCheckoutError("");
+    setBusyPlan(plan);
+    try {
+      await startCheckout(plan, navigate);
+    } catch {
+      setCheckoutError("We couldn't open the payment page. Check your connection and try again.");
+    } finally {
+      setBusyPlan(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-[#10162F]">
       <Navbar />
 
       <main>
-        {/* HERO */}
-        <section className="relative isolate overflow-hidden border-b border-slate-100 bg-white">
+        {/* ---------------- HERO ---------------- */}
+        <section className="relative overflow-hidden">
           <div
+            aria-hidden="true"
             className="pointer-events-none absolute inset-0 -z-10"
             style={{
               background:
-                "radial-gradient(circle at 8% 20%, rgba(81,69,229,0.10), transparent 30%), radial-gradient(circle at 90% 18%, rgba(16,149,137,0.12), transparent 32%), radial-gradient(circle at 55% 100%, rgba(67,133,245,0.06), transparent 40%)",
+                "radial-gradient(60rem 30rem at 85% -10%, rgba(20,224,200,0.12), transparent 60%), radial-gradient(50rem 30rem at -10% 10%, rgba(81,69,229,0.10), transparent 60%)",
             }}
           />
 
-          <div className="pointer-events-none absolute -top-48 left-1/2 -z-10 h-[460px] w-[850px] -translate-x-1/2 rounded-full bg-[#5145E5]/5 blur-[120px]" />
-
-          <div className="mx-auto max-w-7xl px-5 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-20 lg:px-8 lg:pb-24 lg:pt-24">
-            <div className="mx-auto max-w-4xl text-center">
-              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[#5145E5]/15 bg-white/80 px-4 py-2 text-xs font-bold text-[#5145E5] shadow-sm sm:text-sm">
-                <Atom size={16} className="text-[#109589]" />
-                A smarter way to discover your next opportunity
-              </div>
-
-              <h1 className="text-4xl font-black leading-[1.12] tracking-[-0.045em] text-[#10162F] sm:text-5xl md:text-6xl lg:text-7xl">
-                Your next career move
-                <br className="hidden sm:block" />{" "}
-                starts with{" "}
-                <span className="bg-gradient-to-r from-[#5145E5] via-[#4385F5] to-[#109589] bg-clip-text text-transparent">
-                  Quantahire.
-                </span>
-              </h1>
-
-              <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-                Explore job opportunities across technology, finance,
-                engineering, business and more. Find roles that match your
-                skills, experience and ambitions.
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/20 bg-white px-3.5 py-1.5 text-xs font-bold text-[#5145E5] sm:text-sm">
+                <Atom size={15} className="text-[#109589]" />
+                Quantahire 2.0, built with IBM Qiskit
               </p>
 
-              {/* SEARCH */}
+              <h1 className={`${DISPLAY_FONT} mt-6 text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.4rem]`}>
+                The quantum-powered job board
+              </h1>
+
+              <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                We pair AI match scoring with quantum optimisation built on IBM Qiskit to find
+                your strongest matches. Then our AI Copilot tailors your resume and applies in 1 click.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => checkout("trial")}
+                  disabled={busyPlan === "trial"}
+                  className="rounded-xl bg-[#5145E5] px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#5145E5]/25 transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-base"
+                >
+                  {busyPlan === "trial" ? "Opening checkout…" : "Activate auto-apply, $9.99 for 7 days"}
+                </button>
+                <Link
+                  to="/jobs"
+                  className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-extrabold text-[#10162F] transition hover:border-[#5145E5]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-base"
+                >
+                  {jobsLabel ? `Explore ${jobsLabel} live jobs` : "Explore live jobs"}
+                </Link>
+              </div>
+              <p className="mt-3 text-xs text-slate-500">
+                Then $39.99/month from day 8. Cancel anytime.
+              </p>
+              {checkoutError && (
+                <p role="alert" className="mt-3 text-sm font-semibold text-red-600">{checkoutError}</p>
+              )}
+
+              {/* Search */}
               <form
                 onSubmit={handleSearch}
-                className="mx-auto mt-9 max-w-4xl rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl shadow-[#5145E5]/[0.08] transition focus-within:border-[#5145E5]/40"
+                className="mt-10 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/[0.04] focus-within:border-[#5145E5]/50"
               >
-                <div className="flex flex-col lg:flex-row lg:items-center">
-                  <label className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3">
-                    <Search
-                      size={20}
-                      className="shrink-0 text-[#5145E5]"
-                    />
+                <div className="flex flex-col md:flex-row md:items-center">
+                  <label className="flex min-w-0 flex-[1.3] items-center gap-3 px-4 py-3">
+                    <Search size={19} className="shrink-0 text-[#5145E5]" />
+                    <span className="sr-only">Job title, tech stack or keyword</span>
                     <input
                       value={search}
-                      onChange={(event) => setSearch(event.target.value)}
-                      placeholder="Job title, skill or company"
-                      aria-label="Job title, skill or company"
-                      className="w-full min-w-0 bg-transparent text-sm font-medium text-[#10162F] outline-none placeholder:text-slate-400 sm:text-base"
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Job title, tech stack or keyword (e.g. Python)"
+                      className="w-full min-w-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400 sm:text-base"
                     />
                   </label>
-
-                  <div className="hidden h-9 w-px bg-slate-200 lg:block" />
-
-                  <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-slate-100 px-4 py-3 lg:border-t-0">
-                    <MapPin
-                      size={20}
-                      className="shrink-0 text-[#109589]"
-                    />
+                  <div className="hidden h-8 w-px bg-slate-200 md:block" />
+                  <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-slate-100 px-4 py-3 md:border-t-0">
+                    <MapPin size={19} className="shrink-0 text-[#109589]" />
+                    <span className="sr-only">Location</span>
                     <input
-                      value={location}
-                      onChange={(event) => setLocation(event.target.value)}
-                      placeholder="City, country or remote"
-                      aria-label="Job location"
-                      className="w-full min-w-0 bg-transparent text-sm font-medium text-[#10162F] outline-none placeholder:text-slate-400 sm:text-base"
+                      value={place}
+                      onChange={(e) => setPlace(e.target.value)}
+                      placeholder="Remote, Nairobi, London"
+                      className="w-full min-w-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400 sm:text-base"
                     />
                   </label>
-
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-7 py-4 text-sm font-extrabold text-white shadow-md shadow-[#5145E5]/15 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#5145E5] focus:ring-offset-2"
+                    className="rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-6 py-3.5 text-sm font-extrabold text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2"
                   >
                     Search jobs
-                    <ArrowRight size={17} />
                   </button>
                 </div>
               </form>
 
-              {/* POPULAR SEARCHES */}
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-500 sm:text-sm">
-                <span className="text-slate-400">Popular searches:</span>
-
-                {[
-                  { label: "Software Engineer", query: "software engineer" },
-                  { label: "Data Analyst", query: "data analyst" },
-                  { label: "Finance", query: "finance" },
-                  { label: "Remote", query: "remote", remote: true },
-                ].map((item) => (
-                  <Link
-                    key={item.label}
-                    to={
-                      item.remote
-                        ? "/jobs?remote=true"
-                        : `/jobs?search=${encodeURIComponent(item.query)}`
-                    }
-                    className="transition-colors hover:text-[#5145E5]"
+              <div className="mt-4 flex flex-wrap gap-2">
+                {QUICK_TAGS.map((tag) => (
+                  <button
+                    key={tag.label}
+                    type="button"
+                    onClick={() => goToJobs(tag.params)}
+                    className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 transition hover:border-[#5145E5]/40 hover:text-[#5145E5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-sm"
                   >
-                    {item.label}
-                  </Link>
+                    {tag.label}
+                  </button>
                 ))}
               </div>
+
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-slate-600">
+                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Applies via Workday, Greenhouse and Lever</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Listings re-checked daily</li>
+                {jobsLabel && (
+                  <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />{jobsLabel} active roles</li>
+                )}
+              </ul>
             </div>
 
-            {/* STATS */}
-            <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 sm:mt-16 sm:gap-4 md:grid-cols-4">
-              {stats.map((stat) => {
-                const Icon = stat.icon;
+            <MatchRunPreview />
+          </div>
+        </section>
 
-                return (
-                  <div
-                    key={stat.label}
-                    className="group rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#5145E5]/25 hover:shadow-lg hover:shadow-[#5145E5]/[0.06] sm:p-5"
-                  >
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#5145E5]/10 to-[#109589]/10 text-[#5145E5] transition-colors group-hover:text-[#109589]">
-                      <Icon size={19} />
-                    </div>
+        {/* ---------------- STACK STRIP ---------------- */}
+        <section aria-label="Technology" className="border-y border-slate-200 bg-[#F8FAFC]">
+          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-5 py-7 sm:px-6 md:flex-row md:justify-between lg:px-8">
+            <p className="text-sm font-semibold text-slate-500">Built on a modern, secure stack</p>
+            <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+              {STACK.map((name) => (
+                <li key={name} className={`${DISPLAY_FONT} text-base font-bold text-slate-400 sm:text-lg`}>
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
-                    <div className="text-xl font-black text-[#10162F] sm:text-2xl">
-                      {stat.value}
-                    </div>
+        {/* ---------------- PILLARS ---------------- */}
+        <section className="py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
+              Better matches, fewer forms, no dead listings
+            </h2>
 
-                    <div className="mt-1 text-xs font-semibold text-slate-500 sm:text-sm">
-                      {stat.label}
-                    </div>
+            <div className="mt-14 grid gap-x-16 gap-y-12 md:grid-cols-2">
+              {PILLARS.map(({ icon: Icon, title, badge, body }) => (
+                <article key={title} className="border-t-2 border-[#10162F] pt-6">
+                  <div className="flex items-center justify-between gap-4">
+                    <Icon size={26} className="text-[#5145E5]" />
+                    <span className="rounded-full bg-[#109589]/10 px-3 py-1 text-xs font-bold text-[#087F78]">
+                      {badge}
+                    </span>
                   </div>
-                );
-              })}
+                  <h3 className={`${DISPLAY_FONT} mt-5 text-2xl font-bold`}>{title}</h3>
+                  <p className="mt-3 max-w-[60ch] leading-7 text-slate-600">{body}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* LATEST JOBS */}
-        <section className="py-16 sm:py-20 lg:py-24">
+        {/* ---------------- HOW IT WORKS ---------------- */}
+        <section id="how-it-works" className="scroll-mt-20 bg-[#10162F] py-20 text-white sm:py-24">
           <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-            <div className="mb-9 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-              <div>
-                <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-[#109589] sm:text-sm">
-                  Explore new possibilities
-                </p>
+            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
+              How Quantahire works
+            </h2>
+            <p className="mt-4 max-w-xl leading-7 text-slate-300">
+              From CV to offer in four steps. You stay in control of which roles the Copilot applies to.
+            </p>
 
-                <h2 className="text-3xl font-black tracking-tight text-[#10162F] sm:text-4xl">
-                  Latest opportunities
-                </h2>
+            <ol className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+              {STEPS.map(({ icon: Icon, title, body }, i) => (
+                <li key={title} className="relative">
+                  <div className="flex items-center gap-3">
+                    <span className={`${DISPLAY_FONT} text-5xl font-extrabold text-[#14E0C8]`}>{i + 1}</span>
+                    <Icon size={22} className="text-slate-400" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
 
-                <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500 sm:text-base">
-                  Discover recently listed roles from companies hiring across
-                  different industries.
-                </p>
-              </div>
-
-              <Link
-                to="/jobs"
-                className="group inline-flex items-center gap-2 self-start text-sm font-extrabold text-[#5145E5] transition hover:text-[#109589] sm:self-auto"
-              >
-                Browse all jobs
-                <ArrowRight
-                  size={17}
-                  className="transition-transform group-hover:translate-x-1"
-                />
-              </Link>
+        {/* ---------------- PRICING ---------------- */}
+        <section id="pricing" className="scroll-mt-20 py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <h2 className={`${DISPLAY_FONT} text-3xl font-extrabold tracking-tight sm:text-5xl`}>
+                Simple pricing, paid your way
+              </h2>
+              <p className="mt-4 leading-7 text-slate-600">
+                Card, M-Pesa or mobile money through Paystack. Prices in US dollars.
+              </p>
             </div>
 
-            {loading ? (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <div
-                    key={item}
-                    className="h-48 animate-pulse rounded-2xl border border-slate-100 bg-slate-50"
-                  />
-                ))}
-              </div>
-            ) : jobs.length > 0 ? (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {jobs.map((job) => (
-                  <JobCard key={job.id || job.slug} job={job} />
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-[#F8FAFC] px-6 py-14 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#5145E5]/10 text-[#5145E5]">
-                  <BriefcaseBusiness size={27} />
-                </div>
-
-                <h3 className="font-bold text-[#10162F]">
-                  No job listings available yet
-                </h3>
-
-                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                  New opportunities will appear here as jobs become available.
-                  Try browsing all jobs or check back soon.
-                </p>
-
-                <Link
-                  to="/jobs"
-                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#5145E5] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#4338CA]"
-                >
-                  Explore jobs
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
+            {checkoutError && (
+              <p role="alert" className="mt-6 text-sm font-semibold text-red-600">{checkoutError}</p>
             )}
-          </div>
-        </section>
 
-        {/* CATEGORIES */}
-        <section className="bg-[#F8FAFC] py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-            <div className="mx-auto mb-12 max-w-2xl text-center">
-              <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-[#109589] sm:text-sm">
-                Find your field
-              </p>
-
-              <h2 className="text-3xl font-black tracking-tight text-[#10162F] sm:text-4xl">
-                Explore careers by category
-              </h2>
-
-              <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-base">
-                From technology and finance to engineering and operations,
-                discover opportunities across a range of professional fields.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {displayCategories.map((category) => {
-                const Icon = category.icon || getCategoryIcon(category.name);
-
-                return (
-                  <Link
-                    key={category.slug || category.id || category.name}
-                    to={`/jobs?category=${encodeURIComponent(category.slug || category.name)}`}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 transition duration-300 hover:-translate-y-1 hover:border-[#5145E5]/30 hover:shadow-xl hover:shadow-[#5145E5]/[0.06] sm:p-6"
-                  >
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#5145E5]/10 to-[#109589]/10 text-[#5145E5] transition-all duration-300 group-hover:from-[#5145E5] group-hover:to-[#109589] group-hover:text-white">
-                      <Icon size={23} />
-                    </div>
-
-                    <h3 className="text-lg font-extrabold text-[#10162F] transition-colors group-hover:text-[#5145E5]">
-                      {category.name}
-                    </h3>
-
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                      {category.description ||
-                        `Explore ${category.name} job opportunities.`}
-                    </p>
-
-                    <div className="mt-5 flex items-center gap-2 text-sm font-bold text-[#109589]">
-                      Explore jobs
-                      <ArrowRight
-                        size={15}
-                        className="transition-transform group-hover:translate-x-1"
-                      />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* WHY QUANTAHIRE */}
-        <section className="py-16 sm:py-20 lg:py-24">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
-            {/* LEFT */}
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/10 bg-[#5145E5]/5 px-3 py-1.5 text-xs font-extrabold text-[#5145E5]">
-                <Atom size={14} className="text-[#109589]" />
-                Meet Quantahire
-              </div>
-
-              <h2 className="mt-5 max-w-xl text-3xl font-black leading-tight tracking-tight text-[#10162F] sm:text-4xl lg:text-5xl">
-                Less searching.
-                <br />
-                <span className="bg-gradient-to-r from-[#5145E5] to-[#109589] bg-clip-text text-transparent">
-                  More possibilities.
-                </span>
-              </h2>
-
-              <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-                Quantahire brings job discovery into one place, helping you
-                explore roles, compare opportunities and focus on positions
-                aligned with your career goals.
-              </p>
-
-              <div className="mt-8 space-y-5">
-                {benefits.map((item) => (
-                  <div key={item.title} className="flex gap-3">
-                    <CheckCircle2
-                      size={21}
-                      className="mt-0.5 shrink-0 text-[#109589]"
-                    />
-
-                    <div>
-                      <h3 className="font-extrabold text-[#10162F]">
-                        {item.title}
-                      </h3>
-
-                      <p className="mt-1 text-sm leading-6 text-slate-500">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <Link
-                to="/jobs"
-                className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#5145E5] px-5 py-3 text-sm font-bold text-white shadow-md shadow-[#5145E5]/15 transition hover:-translate-y-0.5 hover:bg-[#4338CA]"
-              >
-                Start exploring
-                <ArrowRight size={16} />
-              </Link>
-            </div>
-
-            {/* RIGHT VISUAL */}
-            <div className="relative">
-              <div className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#5145E5]/15 via-[#4385F5]/5 to-[#109589]/15 blur-2xl" />
-
-              <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#10162F] p-5 shadow-2xl sm:p-8">
-                <div className="mb-7 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#63D1C3]">
-                      Your career journey
-                    </p>
-
-                    <h3 className="mt-1 text-xl font-black text-white sm:text-2xl">
-                      Opportunities to explore
-                    </h3>
-                  </div>
-
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#5145E5]/30 to-[#109589]/30 text-[#63D1C3]">
-                    <Atom size={23} />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {[
-                    {
-                      title: "Software Engineer",
-                      company: "Technology",
-                      icon: Code2,
-                      color: "#8B83FF",
-                    },
-                    {
-                      title: "Financial Analyst",
-                      company: "Finance & Banking",
-                      icon: ChartNoAxesCombined,
-                      color: "#63D1C3",
-                    },
-                    {
-                      title: "Data & AI Specialist",
-                      company: "Data & Intelligence",
-                      icon: BrainCircuit,
-                      color: "#70A7FF",
-                    },
-                  ].map((item) => {
-                    const Icon = item.icon;
-
-                    return (
-                      <div
-                        key={item.title}
-                        className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 transition-colors hover:bg-white/[0.08]"
-                      >
-                        <div
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                          style={{
-                            backgroundColor: `${item.color}20`,
-                            color: item.color,
-                          }}
-                        >
-                          <Icon size={20} />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="text-sm font-bold text-white">
-                            {item.title}
-                          </div>
-
-                          <div className="mt-1 text-xs text-slate-400">
-                            {item.company}
-                          </div>
-                        </div>
-
-                        <ArrowRight
-                          size={17}
-                          className="shrink-0 text-slate-500"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#109589]/20 bg-[#109589]/10 p-4">
-                  <Sparkles
-                    size={19}
-                    className="mt-0.5 shrink-0 text-[#63D1C3]"
-                  />
-
-                  <div>
-                    <div className="text-sm font-bold text-white">
-                      A world of opportunities
-                    </div>
-
-                    <p className="mt-1 text-xs leading-5 text-slate-300">
-                      Explore roles across industries and discover where your
-                      skills could take you next.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="px-5 pb-16 sm:px-6 sm:pb-20 lg:px-8 lg:pb-24">
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[#10162F] px-6 py-14 text-center text-white sm:px-10 sm:py-16">
-            <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-[#5145E5]/30 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 right-0 h-72 w-72 rounded-full bg-[#109589]/25 blur-3xl" />
-            <div className="pointer-events-none absolute right-[15%] top-8 h-20 w-20 rounded-full bg-[#4385F5]/15 blur-2xl" />
-
-            <div className="relative mx-auto max-w-2xl">
-              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5145E5]/30 to-[#109589]/30 text-[#63D1C3]">
-                <BellRing size={26} />
-              </div>
-
-              <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
-                Ready for your next opportunity?
-              </h2>
-
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
-                Start exploring job opportunities, discover new career paths
-                and take the next step toward your professional goals.
-              </p>
-
-              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Link
-                  to="/register"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#5145E5]/20 transition hover:-translate-y-0.5 hover:shadow-xl"
+            <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {PLANS.map((plan) => (
+                <article
+                  key={plan.id}
+                  className={`flex flex-col rounded-3xl p-6 ${
+                    plan.featured
+                      ? "bg-[#10162F] text-white ring-2 ring-[#14E0C8]/60"
+                      : "border border-slate-200 bg-white"
+                  }`}
                 >
-                  Join Quantahire
-                  <ArrowRight size={17} />
-                </Link>
+                  {plan.featured && (
+                    <span className="mb-4 self-start rounded-full bg-[#14E0C8]/15 px-3 py-1 text-xs font-bold text-[#14E0C8]">
+                      Most popular
+                    </span>
+                  )}
+                  <h3 className="text-base font-bold">{plan.name}</h3>
+                  <p className="mt-4 flex items-baseline gap-2">
+                    <span className={`${DISPLAY_FONT} text-4xl font-extrabold`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.featured ? "text-slate-300" : "text-slate-500"}`}>{plan.period}</span>
+                  </p>
+                  <p className={`mt-3 text-sm leading-6 ${plan.featured ? "text-slate-300" : "text-slate-600"}`}>
+                    {plan.audience}
+                  </p>
 
-                <Link
-                  to="/jobs"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-extrabold text-white transition hover:border-[#63D1C3]/50 hover:bg-white/10"
-                >
-                  Browse opportunities
-                </Link>
-              </div>
+                  <ul className="mt-6 flex-1 space-y-3">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex gap-2.5 text-sm">
+                        <Check size={17} className={`mt-0.5 shrink-0 ${plan.featured ? "text-[#14E0C8]" : "text-[#109589]"}`} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
 
-              <p className="mt-5 text-xs text-slate-400">
-                Talent. Technology. Opportunity.
-              </p>
+                  {plan.action === "checkout" ? (
+                    <button
+                      type="button"
+                      onClick={() => checkout(plan.id)}
+                      disabled={busyPlan === plan.id}
+                      className={`mt-8 rounded-xl px-4 py-3 text-sm font-extrabold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 ${
+                        plan.featured
+                          ? "bg-[#14E0C8] text-[#10162F] hover:brightness-105"
+                          : "bg-[#5145E5] text-white hover:bg-[#4338CA]"
+                      }`}
+                    >
+                      {busyPlan === plan.id ? "Opening checkout…" : plan.cta}
+                    </button>
+                  ) : (
+                    <Link
+                      to={plan.to}
+                      className="mt-8 rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-extrabold transition hover:border-[#5145E5]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
+                  {plan.note && (
+                    <p className={`mt-3 text-xs ${plan.featured ? "text-slate-400" : "text-slate-500"}`}>{plan.note}</p>
+                  )}
+                </article>
+              ))}
             </div>
+          </div>
+        </section>
+
+        {/* ---------------- FAQ ---------------- */}
+        <section className="border-t border-slate-200 bg-[#F8FAFC] py-20 sm:py-24">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+            <h2 className={`${DISPLAY_FONT} text-3xl font-extrabold tracking-tight sm:text-5xl`}>
+              Questions, answered
+            </h2>
+            <div className="divide-y divide-slate-200 border-y border-slate-200">
+              {FAQS.map((item) => (
+                <details key={item.q} className="group py-5">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-6 text-left text-base font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-lg [&::-webkit-details-marker]:hidden">
+                    {item.q}
+                    <ChevronDown size={20} className="mt-1 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <p className="mt-3 max-w-[68ch] leading-7 text-slate-600">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- FINAL CTA ---------------- */}
+        <section className="px-5 py-20 sm:px-6 lg:px-8">
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-gradient-to-br from-[#5145E5] via-[#3B4FD8] to-[#087F78] px-6 py-16 text-center text-white sm:px-12">
+            <h2 className={`${DISPLAY_FONT} mx-auto max-w-3xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
+              Ready to land your best-matched role?
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl leading-7 text-white/85">
+              Quantum-optimised matching and a Copilot that applies for you, from $9.99 for your first week.
+            </p>
+            <button
+              type="button"
+              onClick={() => checkout("trial")}
+              disabled={busyPlan === "trial"}
+              className="mt-8 rounded-xl bg-white px-7 py-3.5 text-sm font-extrabold text-[#10162F] transition hover:bg-[#E9FFFB] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#5145E5] disabled:opacity-60 sm:text-base"
+            >
+              {busyPlan === "trial" ? "Opening checkout…" : "Start 7-day access, $9.99"}
+            </button>
+            <p className="mt-3 text-xs text-white/70">Then $39.99/month from day 8. Cancel anytime.</p>
           </div>
         </section>
       </main>
