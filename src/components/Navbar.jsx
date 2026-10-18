@@ -17,7 +17,7 @@ const NAV_LINKS = [
 ];
 
 /** Quantum "Q" mark: an orbit ring with a qubit dot, indigo to neon teal. */
-export function QuantahireMark({ size = 32 }) {
+export function QuantahireMark({ size = 44 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
       <defs>
@@ -60,19 +60,19 @@ export default function Navbar() {
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-md">
+      <nav className="mx-auto flex h-20 sm:h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
-  to="/"
-  aria-label="Quantahire home"
-  className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
->
-  <img
-    src={quantahireLogo}
-    alt="Quantahire"
-    className="h-10 w-auto object-contain sm:h-12"
-  />
-</Link>
+          to="/"
+          aria-label="Quantahire home"
+          className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+        >
+          <img
+            src={quantahireLogo}
+            alt="Quantahire"
+            className="h-12 w-auto object-contain sm:h-16"
+          />
+        </Link>
 
         <div className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => (
@@ -85,7 +85,7 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             to="/signin"
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:text-[#10162F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+            className="rounded-lg px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-[#10162F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
           >
             Signin
           </Link>
@@ -93,7 +93,7 @@ export default function Navbar() {
             type="button"
             onClick={startTrial}
             disabled={busy}
-            className="rounded-xl bg-[#5145E5] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60"
+            className="rounded-xl bg-[#5145E5] px-4.5 py-2.5 text-sm font-bold text-white transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60"
           >
             {busy ? "Opening checkout…" : "Start 7-day trial ($9.99)"}
           </button>
@@ -102,29 +102,33 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="rounded-lg p-2 text-[#10162F] lg:hidden"
+          className="rounded-lg p-2 text-[#10162F] lg:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={26} /> : <Menu size={26} />}
         </button>
       </nav>
 
       {open && (
-        <div className="border-t border-slate-200 bg-white px-5 pb-5 pt-2 lg:hidden">
+        <div className="border-t border-slate-200 bg-white px-5 pb-6 pt-3 lg:hidden shadow-lg">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.label}
               to={link.to}
               onClick={() => setOpen(false)}
-              className="block rounded-lg px-2 py-3 text-base font-semibold text-slate-700"
+              className="block rounded-lg px-2 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50"
             >
               {link.label}
             </Link>
           ))}
-          <div className="mt-3 grid gap-2">
-            <Link to="/login" className="rounded-xl border border-slate-200 px-4 py-3 text-center font-semibold">
-              Log in
+          <div className="mt-4 grid gap-2.5">
+            <Link 
+              to="/signin" 
+              onClick={() => setOpen(false)}
+              className="rounded-xl border border-slate-200 px-4 py-3 text-center font-semibold text-slate-700"
+            >
+              Signin
             </Link>
             <button
               type="button"
