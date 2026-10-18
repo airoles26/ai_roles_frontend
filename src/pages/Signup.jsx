@@ -14,6 +14,9 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import quantahireLogo from "../assets/logo.png";
+
+
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL || "http://192.168.100.12:8000/api/v1"
 ).replace(/\/$/, "");
@@ -189,14 +192,18 @@ export default function Signup() {
         <div className="absolute -right-16 top-40 h-64 w-64 rounded-full border border-white/10" />
         <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-[#1699A4]/20 blur-3xl" />
 
-        <Link to="/" className="relative z-10 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#1699A4]">
-            <BriefcaseBusiness size={23} />
-          </div>
-          <span className="text-2xl font-bold tracking-tight">
-            Quanta<span className="text-[#1699A4]">hire</span>
-          </span>
-        </Link>
+        <Link
+                  to="/"
+                  aria-label="Quantahire home"
+                  className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+                >
+                  <img
+                    src={quantahireLogo}
+                    alt="Quantahire"
+                    className="h-10 w-auto object-contain sm:h-12"
+                  />
+                </Link>
+        
 
         <div className="relative z-10 max-w-xl py-16">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-teal-200">

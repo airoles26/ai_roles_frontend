@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 import { startCheckout } from "./checkout/Checkout";
+import quantahireLogo from "../assets/logo.png";
 
 export const DISPLAY_FONT =
   "font-['Bricolage_Grotesque',ui-sans-serif,system-ui,sans-serif]";
@@ -47,7 +48,7 @@ export default function Navbar() {
     try {
       await startCheckout("trial", navigate);
     } catch {
-      navigate("/register?plan=trial");
+      navigate("/signup?plan=trial");
     } finally {
       setBusy(false);
     }
@@ -61,12 +62,17 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]">
-          <QuantahireMark />
-          <span className={`${DISPLAY_FONT} text-xl font-bold tracking-tight text-[#10162F]`}>
-            Quantahire
-          </span>
-        </Link>
+        <Link
+  to="/"
+  aria-label="Quantahire home"
+  className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+>
+  <img
+    src={quantahireLogo}
+    alt="Quantahire"
+    className="h-10 w-auto object-contain sm:h-12"
+  />
+</Link>
 
         <div className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => (
@@ -81,7 +87,7 @@ export default function Navbar() {
             to="/signin"
             className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:text-[#10162F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
           >
-            Log in
+            Signin
           </Link>
           <button
             type="button"
