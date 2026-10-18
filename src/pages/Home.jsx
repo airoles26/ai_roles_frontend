@@ -337,8 +337,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-lg sm:leading-8">
-                We pair AI match scoring with quantum optimisation built on IBM Qiskit to find
-                your strongest matches. Then our AI Copilot tailors your resume and applies in 1 click.
+                Quantahire operates as the world's first quantum powered job board, seamlessly uniting an extensive programmatic job repository with an autonomous AI Copilot suite ('Quantum Talent') and an enterprise IBM Qiskit QAOA matching engine.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
