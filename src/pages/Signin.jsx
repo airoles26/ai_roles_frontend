@@ -104,7 +104,7 @@ export default function Signin() {
       otherStorage.removeItem("user");
 
       if (user.role === "employer") {
-        navigate("/employer/dashboard", { replace: true });
+        navigate("/company/dashboard", { replace: true });
       } else if (user.role === "admin") {
         navigate("/admin/admin-dashboard", { replace: true });
       } else {

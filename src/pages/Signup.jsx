@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || "https://ai-roles-backend.onrender.com/api/v1"
+  import.meta.env.VITE_API_URL || "http://192.168.100.12:8000/api/v1"
 ).replace(/\/$/, "");
 
 const initialForm = {
@@ -24,6 +24,14 @@ const initialForm = {
   email: "",
   phone_number: "",
   role: "job_seeker",
+
+  // Employer/company fields
+  company_name: "",
+  company_website: "",
+  company_description: "",
+  company_location: "",
+  company_country: "",
+
   password: "",
   password_confirm: "",
 };
@@ -87,6 +95,24 @@ export default function Signup() {
 
     setLoading(true);
 
+    const payload = {
+  full_name: form.full_name.trim(),
+  username: form.username.trim(),
+  email: form.email.trim().toLowerCase(),
+  phone_number: form.phone_number.trim(),
+  role: form.role,
+  password: form.password,
+  password_confirm: form.password_confirm,
+
+  ...(form.role === "employer" && {
+    company_name: form.company_name.trim(),
+    company_website: form.company_website.trim(),
+    company_description: form.company_description.trim(),
+    company_location: form.company_location.trim(),
+    company_country: form.company_country.trim(),
+  }),
+};
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/auth/signup/`,
@@ -95,25 +121,35 @@ export default function Signup() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         }
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        setFieldErrors(
-          Object.fromEntries(
-            Object.entries(data).map(([key, value]) => [
-              key,
-              Array.isArray(value) ? value.join(" ") : String(value),
-            ])
-          )
-        );
+  const errors = data.errors || {};
 
-        setError(getErrorMessage(data));
-        return;
-      }
+  setFieldErrors(
+    Object.fromEntries(
+      Object.entries(errors).map(([key, value]) => [
+        key,
+        Array.isArray(value)
+          ? value.join(" ")
+          : String(value),
+      ])
+    )
+  );
+
+  setError(
+    data.message ||
+      (!Object.keys(errors).length
+        ? "Please check your details and try again."
+        : "")
+  );
+
+  return;
+}
 
       // Store the JWT credentials returned by Django.
       localStorage.setItem("access", data.tokens.access);
@@ -122,7 +158,7 @@ export default function Signup() {
 
       // Send each account type to the appropriate starting page.
       if (data.user.role === "employer") {
-        navigate("/employer/dashboard");
+        navigate("/company/dashboard");
       } else {
         navigate("/jobs");
       }
@@ -269,12 +305,15 @@ export default function Signup() {
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() =>
-                        setForm((previous) => ({
-                          ...previous,
-                          role: option.value,
-                        }))
-                      }
+                      onClick={() => {
+  setForm((previous) => ({
+    ...previous,
+    role: option.value,
+  }));
+
+  setFieldErrors({});
+  setError("");
+}}
                       className={`rounded-xl border p-4 text-left transition ${
                         selected
                           ? "border-[#1699A4] bg-[#1699A4]/5 ring-2 ring-[#1699A4]/10"
@@ -380,6 +419,147 @@ export default function Signup() {
               </div>
               {fieldError("phone_number")}
             </div>
+
+
+
+{/* Employer-only company information */}
+{form.role === "employer" && (
+  <div className="space-y-5 rounded-2xl border border-[#1699A4]/20 bg-[#1699A4]/5 p-5">
+    <div>
+      <h3 className="text-base font-bold text-[#071A3D]">
+        Company information
+      </h3>
+      <p className="mt-1 text-sm text-slate-500">
+        Tell us about the organization you are hiring for.
+      </p>
+    </div>
+
+    {/* Company name */}
+    <div>
+      <label
+        htmlFor="company_name"
+        className="mb-2 block text-sm font-semibold text-slate-700"
+      >
+        Company name <span className="text-red-500">*</span>
+      </label>
+
+      <div className="relative">
+        <BriefcaseBusiness
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+        />
+
+        <input
+          id="company_name"
+          name="company_name"
+          value={form.company_name}
+          onChange={updateField}
+          className={inputClass}
+          placeholder="e.g. Quantahire Technologies"
+          autoComplete="organization"
+          required={form.role === "employer"}
+          maxLength={255}
+        />
+      </div>
+
+      {fieldError("company_name")}
+    </div>
+
+    {/* Company website */}
+    <div>
+      <label
+        htmlFor="company_website"
+        className="mb-2 block text-sm font-semibold text-slate-700"
+      >
+        Company website
+        <span className="ml-1 font-normal text-slate-400">
+          (optional)
+        </span>
+      </label>
+
+      <input
+        id="company_website"
+        name="company_website"
+        type="url"
+        value={form.company_website}
+        onChange={updateField}
+        className={inputClass.replace("pl-11", "pl-4")}
+        placeholder="https://yourcompany.com"
+      />
+
+      {fieldError("company_website")}
+    </div>
+
+    {/* Company description */}
+    <div>
+      <label
+        htmlFor="company_description"
+        className="mb-2 block text-sm font-semibold text-slate-700"
+      >
+        About the company
+        <span className="ml-1 font-normal text-slate-400">
+          (optional)
+        </span>
+      </label>
+
+      <textarea
+        id="company_description"
+        name="company_description"
+        value={form.company_description}
+        onChange={updateField}
+        rows={3}
+        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1699A4] focus:ring-4 focus:ring-[#1699A4]/10"
+        placeholder="Briefly describe your organization..."
+      />
+
+      {fieldError("company_description")}
+    </div>
+
+    {/* Location and country */}
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          htmlFor="company_location"
+          className="mb-2 block text-sm font-semibold text-slate-700"
+        >
+          Company location
+        </label>
+
+        <input
+          id="company_location"
+          name="company_location"
+          value={form.company_location}
+          onChange={updateField}
+          className={inputClass.replace("pl-11", "pl-4")}
+          placeholder="e.g. Nairobi"
+        />
+
+        {fieldError("company_location")}
+      </div>
+
+      <div>
+        <label
+          htmlFor="company_country"
+          className="mb-2 block text-sm font-semibold text-slate-700"
+        >
+          Country
+        </label>
+
+        <input
+          id="company_country"
+          name="company_country"
+          value={form.company_country}
+          onChange={updateField}
+          className={inputClass.replace("pl-11", "pl-4")}
+          placeholder="e.g. Kenya"
+        />
+
+        {fieldError("company_country")}
+      </div>
+    </div>
+  </div>
+)}
+
 
             <div>
               <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
