@@ -12,13 +12,19 @@ import {
   Phone,
   UserRound,
   CheckCircle2,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  Globe,
+  MapPin,
+  Building2,
 } from "lucide-react";
 
 import quantahireLogo from "../assets/logo.png";
 
-
 const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || "http://192.168.100.12:8000/api/v1"
+  import.meta.env.VITE_API_URL ||
+  "http://192.168.100.12:8000/api/v1"
 ).replace(/\/$/, "");
 
 const initialForm = {
@@ -27,24 +33,43 @@ const initialForm = {
   email: "",
   phone_number: "",
   role: "job_seeker",
-
-  // Employer/company fields
   company_name: "",
   company_website: "",
   company_description: "",
   company_location: "",
   company_country: "",
-
   password: "",
   password_confirm: "",
 };
+
+const ACCOUNT_TYPES = [
+  {
+    value: "job_seeker",
+    title: "Job seeker",
+    description: "Find your next opportunity",
+    icon: UserRound,
+  },
+  {
+    value: "employer",
+    title: "Employer",
+    description: "Discover and hire talent",
+    icon: BriefcaseBusiness,
+  },
+];
+
+const BENEFITS = [
+  "Discover opportunities tailored to your skills",
+  "Optimize your career journey with AI tools",
+  "Connect candidates with ambitious employers",
+];
 
 export default function Signup() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
@@ -63,18 +88,6 @@ export default function Signup() {
     }));
 
     setError("");
-  };
-
-  const getErrorMessage = (data) => {
-    if (typeof data === "string") return data;
-
-    if (data?.detail) return data.detail;
-
-    if (data?.non_field_errors) {
-      return data.non_field_errors.join(" ");
-    }
-
-    return "Please check your details and try again.";
   };
 
   const handleSubmit = async (event) => {
@@ -99,22 +112,21 @@ export default function Signup() {
     setLoading(true);
 
     const payload = {
-  full_name: form.full_name.trim(),
-  username: form.username.trim(),
-  email: form.email.trim().toLowerCase(),
-  phone_number: form.phone_number.trim(),
-  role: form.role,
-  password: form.password,
-  password_confirm: form.password_confirm,
-
-  ...(form.role === "employer" && {
-    company_name: form.company_name.trim(),
-    company_website: form.company_website.trim(),
-    company_description: form.company_description.trim(),
-    company_location: form.company_location.trim(),
-    company_country: form.company_country.trim(),
-  }),
-};
+      full_name: form.full_name.trim(),
+      username: form.username.trim(),
+      email: form.email.trim().toLowerCase(),
+      phone_number: form.phone_number.trim(),
+      role: form.role,
+      password: form.password,
+      password_confirm: form.password_confirm,
+      ...(form.role === "employer" && {
+        company_name: form.company_name.trim(),
+        company_website: form.company_website.trim(),
+        company_description: form.company_description.trim(),
+        company_location: form.company_location.trim(),
+        company_country: form.company_country.trim(),
+      }),
+    };
 
     try {
       const response = await fetch(
@@ -131,39 +143,41 @@ export default function Signup() {
       const data = await response.json();
 
       if (!response.ok) {
-  const errors = data.errors || {};
+        const errors = data.errors || {};
 
-  setFieldErrors(
-    Object.fromEntries(
-      Object.entries(errors).map(([key, value]) => [
-        key,
-        Array.isArray(value)
-          ? value.join(" ")
-          : String(value),
-      ])
-    )
-  );
+        setFieldErrors(
+          Object.fromEntries(
+            Object.entries(errors).map(([key, value]) => [
+              key,
+              Array.isArray(value)
+                ? value.join(" ")
+                : String(value),
+            ])
+          )
+        );
 
-  setError(
-    data.message ||
-      (!Object.keys(errors).length
-        ? "Please check your details and try again."
-        : "")
-  );
+        setError(
+          data.message ||
+            (!Object.keys(errors).length
+              ? "Please check your details and try again."
+              : "")
+        );
 
-  return;
-}
+        return;
+      }
 
-      // Store the JWT credentials returned by Django.
       localStorage.setItem("access", data.tokens.access);
       localStorage.setItem("refresh", data.tokens.refresh);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Send each account type to the appropriate starting page.
+      sessionStorage.removeItem("access");
+      sessionStorage.removeItem("refresh");
+      sessionStorage.removeItem("user");
+
       if (data.user.role === "employer") {
-        navigate("/company/dashboard");
+        navigate("/company/dashboard", { replace: true });
       } else {
-        navigate("/jobs");
+        navigate("/jobs", { replace: true });
       }
     } catch {
       setError(
@@ -175,136 +189,189 @@ export default function Signup() {
   };
 
   const inputClass =
-    "w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1699A4] focus:ring-4 focus:ring-[#1699A4]/10";
+    "w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-900 outline-none transition-all duration-200 placeholder:text-slate-400 hover:border-indigo-200 focus:border-[#5145E5] focus:ring-4 focus:ring-[#5145E5]/10";
+
+  const plainInputClass =
+    "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition-all duration-200 placeholder:text-slate-400 hover:border-indigo-200 focus:border-[#5145E5] focus:ring-4 focus:ring-[#5145E5]/10";
+
+  const labelClass =
+    "mb-2.5 block text-sm font-semibold text-[#18124A]";
 
   const fieldError = (name) =>
     fieldErrors[name] ? (
-      <p className="mt-1 text-xs text-red-600">
+      <p className="mt-1.5 text-xs text-red-600">
         {fieldErrors[name]}
       </p>
     ) : null;
 
   return (
-    <div className="min-h-screen bg-[#F7FAFC] lg:grid lg:grid-cols-2">
-      {/* Branding panel */}
-      <aside className="relative hidden overflow-hidden bg-[#071A3D] px-12 py-12 text-white lg:flex lg:flex-col lg:justify-between xl:px-20">
-        <div className="absolute -right-32 top-24 h-96 w-96 rounded-full border border-white/10" />
-        <div className="absolute -right-16 top-40 h-64 w-64 rounded-full border border-white/10" />
-        <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-[#1699A4]/20 blur-3xl" />
+    <div className="min-h-screen bg-[#F8F9FF] lg:grid lg:grid-cols-2">
+      {/* LEFT BRANDING PANEL */}
+      <aside className="relative hidden min-h-screen flex-col justify-between overflow-hidden bg-[#18124A] px-12 py-12 text-white lg:flex xl:px-20">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#211766] via-[#34238C] to-[#5145E5]" />
 
+        <div className="pointer-events-none absolute -right-32 -top-32 h-[450px] w-[450px] rounded-full bg-[#14E0C8]/20 blur-[100px]" />
+        <div className="pointer-events-none absolute -bottom-32 -left-24 h-[450px] w-[450px] rounded-full bg-[#8B7BFF]/30 blur-[110px]" />
+
+        <div className="pointer-events-none absolute right-12 top-40 h-72 w-72 rounded-full border border-white/10" />
+        <div className="pointer-events-none absolute right-20 top-48 h-56 w-56 rounded-full border border-white/10" />
+        <div className="pointer-events-none absolute right-28 top-56 h-40 w-40 rounded-full border border-white/10" />
+
+        {/* Logo */}
         <Link
-                  to="/"
-                  aria-label="Quantahire home"
-                  className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
-                >
-                  <img
-                    src={quantahireLogo}
-                    alt="Quantahire"
-                    className="h-10 w-auto object-contain sm:h-12"
-                  />
-                </Link>
-        
+          to="/"
+          aria-label="Quantahire home"
+          className="relative z-10 inline-flex w-fit items-center rounded-xl bg-white px-4 py-2 shadow-xl shadow-black/10"
+        >
+          <img
+            src={quantahireLogo}
+            alt="Quantahire"
+            className="h-12 w-auto object-contain"
+          />
+        </Link>
 
-        <div className="relative z-10 max-w-xl py-16">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-teal-200">
-            <CheckCircle2 size={16} />
-            Your next opportunity starts here
-          </span>
+        <div className="relative z-10 max-w-xl py-14">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#14E0C8]/30 bg-[#14E0C8]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#6FFFEF]">
+            <Sparkles size={15} />
+            WELCOME TO QUANTAHIRE
+          </div>
 
-          <h1 className="mt-8 text-5xl font-bold leading-tight xl:text-6xl">
-            Build your future.
-            <span className="mt-2 block text-[#1699A4]">
-              Find your next opportunity.
+          <h1 className="text-5xl font-extrabold leading-[1.13] tracking-tight xl:text-6xl">
+            Your next chapter
+            <span className="mt-2 block text-white">
+              begins with
+            </span>
+            <span className="mt-2 block bg-gradient-to-r from-[#14E0C8] via-[#7CFBEA] to-white bg-clip-text text-transparent">
+              possibilities.
             </span>
           </h1>
 
-          <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
-            Join a global community of professionals and employers.
-            Discover opportunities, connect with talent, and take the
-            next step in your career.
+          <p className="mt-7 max-w-lg text-base leading-8 text-indigo-100/80 xl:text-lg">
+            Join Quantahire to discover relevant career
+            opportunities, access intelligent tools, or
+            connect your organization with exceptional
+            talent.
           </p>
 
-          <div className="mt-10 grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <BriefcaseBusiness className="mb-3 text-[#1699A4]" size={24} />
-              <h3 className="font-semibold">Explore opportunities</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-400">
-                Discover jobs that match your ambitions.
+          <div className="mt-10 space-y-5">
+            {BENEFITS.map((benefit) => (
+              <div
+                key={benefit}
+                className="flex items-center gap-3"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#14E0C8]/20 bg-[#14E0C8]/10 text-[#14E0C8]">
+                  <CheckCircle2 size={19} />
+                </div>
+
+                <span className="text-sm font-medium text-indigo-50/90">
+                  {benefit}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-xl">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#14E0C8]/15 text-[#14E0C8]">
+                <Zap size={22} />
+              </div>
+
+              <h3 className="text-sm font-bold text-white">
+                For job seekers
+              </h3>
+
+              <p className="mt-2 text-xs leading-6 text-indigo-100/75">
+                Explore jobs and grow your career with
+                intelligent recommendations.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-              <UserRound className="mb-3 text-[#1699A4]" size={24} />
-              <h3 className="font-semibold">Connect with talent</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-400">
-                Help your organization find the right people.
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-xl">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#14E0C8]/15 text-[#14E0C8]">
+                <BriefcaseBusiness size={22} />
+              </div>
+
+              <h3 className="text-sm font-bold text-white">
+                For employers
+              </h3>
+
+              <p className="mt-2 text-xs leading-6 text-indigo-100/75">
+                Post opportunities and connect with
+                professionals who fit your needs.
               </p>
             </div>
           </div>
         </div>
 
-        <p className="relative z-10 text-sm text-slate-400">
-          © {new Date().getFullYear()} Quantahire. All rights reserved.
-        </p>
+        <div className="relative z-10 flex items-center justify-between gap-4 text-xs text-indigo-200/70">
+          <span>
+            © {new Date().getFullYear()} Quantahire
+          </span>
+
+          <span className="flex items-center gap-1.5">
+            <ShieldCheck size={15} />
+            Secure registration
+          </span>
+        </div>
       </aside>
 
-      {/* Signup form */}
-      <main className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-10 lg:px-12">
-        <div className="w-full max-w-lg">
+      {/* RIGHT SIGNUP FORM */}
+      <main className="relative flex min-h-screen items-start justify-center px-5 py-12 sm:px-10 lg:px-12">
+        <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-[#5145E5]/5 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-[#14E0C8]/5 blur-3xl" />
+
+        <div className="relative z-10 w-full max-w-[520px]">
+          {/* Mobile logo */}
           <Link
             to="/"
-            className="mb-9 flex items-center gap-2 lg:hidden"
+            className="mb-10 inline-flex items-center lg:hidden"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#071A3D] text-white">
-              <BriefcaseBusiness size={21} />
-            </div>
-            <span className="text-xl font-bold text-[#071A3D]">
-              Quanta<span className="text-[#1699A4]">hire</span>
-            </span>
+            <img
+              src={quantahireLogo}
+              alt="Quantahire"
+              className="h-14 w-auto object-contain"
+            />
           </Link>
 
+          {/* Heading */}
           <div className="mb-8">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#1699A4]">
-              Get started for free
-            </p>
-            <h2 className="text-3xl font-bold tracking-tight text-[#071A3D] sm:text-4xl">
-              Create your account
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#5145E5]/10 bg-[#5145E5]/5 px-3.5 py-1.5 text-xs font-bold text-[#5145E5]">
+              <Sparkles size={14} />
+              GET STARTED WITH QUANTAHIRE
+            </div>
+
+            <h2 className="text-3xl font-extrabold tracking-tight text-[#18124A] sm:text-4xl">
+              Create your
+              <span className="block bg-gradient-to-r from-[#5145E5] to-[#16BFAF] bg-clip-text text-transparent">
+                Quantahire account
+              </span>
             </h2>
-            <p className="mt-3 text-sm leading-6 text-slate-500">
-              Join Quantahire and take your next career or hiring step.
+
+            <p className="mt-4 text-sm leading-7 text-slate-500">
+              Join our platform to discover opportunities
+              or find the right talent for your team.
             </p>
           </div>
 
+          {/* General error */}
           {error && (
             <div
               role="alert"
-              className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
             >
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* ACCOUNT TYPE */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
+              <label className={labelClass}>
                 I want to join as
               </label>
 
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  {
-                    value: "job_seeker",
-                    title: "Job seeker",
-                    description: "Find your next job",
-                    icon: UserRound,
-                  },
-                  {
-                    value: "employer",
-                    title: "Employer",
-                    description: "Hire great talent",
-                    icon: BriefcaseBusiness,
-                  },
-                ].map((option) => {
+                {ACCOUNT_TYPES.map((option) => {
                   const Icon = option.icon;
                   const selected = form.role === option.value;
 
@@ -312,46 +379,58 @@ export default function Signup() {
                     <button
                       key={option.value}
                       type="button"
+                      aria-pressed={selected}
                       onClick={() => {
-  setForm((previous) => ({
-    ...previous,
-    role: option.value,
-  }));
-
-  setFieldErrors({});
-  setError("");
-}}
-                      className={`rounded-xl border p-4 text-left transition ${
+                        setForm((previous) => ({
+                          ...previous,
+                          role: option.value,
+                        }));
+                        setFieldErrors({});
+                        setError("");
+                      }}
+                      className={`rounded-2xl border p-4 text-left transition-all duration-200 ${
                         selected
-                          ? "border-[#1699A4] bg-[#1699A4]/5 ring-2 ring-[#1699A4]/10"
-                          : "border-slate-200 bg-white hover:border-slate-300"
+                          ? "border-[#5145E5] bg-[#5145E5]/5 ring-2 ring-[#5145E5]/10 shadow-sm"
+                          : "border-slate-200 bg-white hover:border-[#5145E5]/40 hover:bg-indigo-50/30"
                       }`}
                     >
-                      <Icon
-                        size={22}
-                        className={
-                          selected ? "text-[#1699A4]" : "text-slate-500"
-                        }
-                      />
-                      <span className="mt-3 block text-sm font-bold text-[#071A3D]">
+                      <div
+                        className={`mb-3 flex h-11 w-11 items-center justify-center rounded-xl ${
+                          selected
+                            ? "bg-[#5145E5] text-white"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        <Icon size={21} />
+                      </div>
+
+                      <span className="block text-sm font-bold text-[#18124A]">
                         {option.title}
                       </span>
-                      <span className="mt-1 block text-xs text-slate-500">
+
+                      <span className="mt-1 block text-xs leading-5 text-slate-500">
                         {option.description}
                       </span>
                     </button>
                   );
                 })}
               </div>
+
               {fieldError("role")}
             </div>
 
+            {/* FULL NAME */}
             <div>
-              <label htmlFor="full_name" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="full_name" className={labelClass}>
                 Full name
               </label>
+
               <div className="relative">
-                <UserRound className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <UserRound
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="full_name"
                   name="full_name"
@@ -363,15 +442,22 @@ export default function Signup() {
                   required
                 />
               </div>
+
               {fieldError("full_name")}
             </div>
 
+            {/* USERNAME */}
             <div>
-              <label htmlFor="username" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="username" className={labelClass}>
                 Username
               </label>
+
               <div className="relative">
-                <UserRound className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <UserRound
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="username"
                   name="username"
@@ -383,15 +469,22 @@ export default function Signup() {
                   required
                 />
               </div>
+
               {fieldError("username")}
             </div>
 
+            {/* EMAIL */}
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="email" className={labelClass}>
                 Email address
               </label>
+
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Mail
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="email"
                   name="email"
@@ -404,15 +497,25 @@ export default function Signup() {
                   required
                 />
               </div>
+
               {fieldError("email")}
             </div>
 
+            {/* PHONE NUMBER */}
             <div>
-              <label htmlFor="phone_number" className="mb-2 block text-sm font-semibold text-slate-700">
-                Phone number <span className="font-normal text-slate-400">(optional)</span>
+              <label htmlFor="phone_number" className={labelClass}>
+                Phone number{" "}
+                <span className="font-normal text-slate-400">
+                  (optional)
+                </span>
               </label>
+
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Phone
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="phone_number"
                   name="phone_number"
@@ -424,156 +527,178 @@ export default function Signup() {
                   autoComplete="tel"
                 />
               </div>
+
               {fieldError("phone_number")}
             </div>
 
+            {/* EMPLOYER COMPANY INFORMATION */}
+            {form.role === "employer" && (
+              <div className="space-y-5 rounded-2xl border border-[#5145E5]/15 bg-[#5145E5]/[0.035] p-5 sm:p-6">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#5145E5]/10 text-[#5145E5]">
+                    <Building2 size={21} />
+                  </div>
 
+                  <div>
+                    <h3 className="text-base font-bold text-[#18124A]">
+                      Company information
+                    </h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-500">
+                      Tell us about the organization
+                      you're hiring for.
+                    </p>
+                  </div>
+                </div>
 
-{/* Employer-only company information */}
-{form.role === "employer" && (
-  <div className="space-y-5 rounded-2xl border border-[#1699A4]/20 bg-[#1699A4]/5 p-5">
-    <div>
-      <h3 className="text-base font-bold text-[#071A3D]">
-        Company information
-      </h3>
-      <p className="mt-1 text-sm text-slate-500">
-        Tell us about the organization you are hiring for.
-      </p>
-    </div>
+                <div>
+                  <label
+                    htmlFor="company_name"
+                    className={labelClass}
+                  >
+                    Company name{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
 
-    {/* Company name */}
-    <div>
-      <label
-        htmlFor="company_name"
-        className="mb-2 block text-sm font-semibold text-slate-700"
-      >
-        Company name <span className="text-red-500">*</span>
-      </label>
+                  <div className="relative">
+                    <Building2
+                      size={19}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                    />
 
-      <div className="relative">
-        <BriefcaseBusiness
-          size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-        />
+                    <input
+                      id="company_name"
+                      name="company_name"
+                      value={form.company_name}
+                      onChange={updateField}
+                      className={inputClass}
+                      placeholder="e.g. Quantahire Technologies"
+                      autoComplete="organization"
+                      required
+                      maxLength={255}
+                    />
+                  </div>
 
-        <input
-          id="company_name"
-          name="company_name"
-          value={form.company_name}
-          onChange={updateField}
-          className={inputClass}
-          placeholder="e.g. Quantahire Technologies"
-          autoComplete="organization"
-          required={form.role === "employer"}
-          maxLength={255}
-        />
-      </div>
+                  {fieldError("company_name")}
+                </div>
 
-      {fieldError("company_name")}
-    </div>
+                <div>
+                  <label
+                    htmlFor="company_website"
+                    className={labelClass}
+                  >
+                    Company website{" "}
+                    <span className="font-normal text-slate-400">
+                      (optional)
+                    </span>
+                  </label>
 
-    {/* Company website */}
-    <div>
-      <label
-        htmlFor="company_website"
-        className="mb-2 block text-sm font-semibold text-slate-700"
-      >
-        Company website
-        <span className="ml-1 font-normal text-slate-400">
-          (optional)
-        </span>
-      </label>
+                  <div className="relative">
+                    <Globe
+                      size={19}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                    />
 
-      <input
-        id="company_website"
-        name="company_website"
-        type="url"
-        value={form.company_website}
-        onChange={updateField}
-        className={inputClass.replace("pl-11", "pl-4")}
-        placeholder="https://yourcompany.com"
-      />
+                    <input
+                      id="company_website"
+                      name="company_website"
+                      type="url"
+                      value={form.company_website}
+                      onChange={updateField}
+                      className={inputClass}
+                      placeholder="https://yourcompany.com"
+                    />
+                  </div>
 
-      {fieldError("company_website")}
-    </div>
+                  {fieldError("company_website")}
+                </div>
 
-    {/* Company description */}
-    <div>
-      <label
-        htmlFor="company_description"
-        className="mb-2 block text-sm font-semibold text-slate-700"
-      >
-        About the company
-        <span className="ml-1 font-normal text-slate-400">
-          (optional)
-        </span>
-      </label>
+                <div>
+                  <label
+                    htmlFor="company_description"
+                    className={labelClass}
+                  >
+                    About the company{" "}
+                    <span className="font-normal text-slate-400">
+                      (optional)
+                    </span>
+                  </label>
 
-      <textarea
-        id="company_description"
-        name="company_description"
-        value={form.company_description}
-        onChange={updateField}
-        rows={3}
-        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#1699A4] focus:ring-4 focus:ring-[#1699A4]/10"
-        placeholder="Briefly describe your organization..."
-      />
+                  <textarea
+                    id="company_description"
+                    name="company_description"
+                    value={form.company_description}
+                    onChange={updateField}
+                    rows={3}
+                    className={plainInputClass}
+                    placeholder="Briefly describe your organization..."
+                  />
 
-      {fieldError("company_description")}
-    </div>
+                  {fieldError("company_description")}
+                </div>
 
-    {/* Location and country */}
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div>
-        <label
-          htmlFor="company_location"
-          className="mb-2 block text-sm font-semibold text-slate-700"
-        >
-          Company location
-        </label>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="company_location"
+                      className={labelClass}
+                    >
+                      Company location
+                    </label>
 
-        <input
-          id="company_location"
-          name="company_location"
-          value={form.company_location}
-          onChange={updateField}
-          className={inputClass.replace("pl-11", "pl-4")}
-          placeholder="e.g. Nairobi"
-        />
+                    <div className="relative">
+                      <MapPin
+                        size={18}
+                        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                      />
 
-        {fieldError("company_location")}
-      </div>
+                      <input
+                        id="company_location"
+                        name="company_location"
+                        value={form.company_location}
+                        onChange={updateField}
+                        className={inputClass}
+                        placeholder="e.g. Nairobi"
+                      />
+                    </div>
 
-      <div>
-        <label
-          htmlFor="company_country"
-          className="mb-2 block text-sm font-semibold text-slate-700"
-        >
-          Country
-        </label>
+                    {fieldError("company_location")}
+                  </div>
 
-        <input
-          id="company_country"
-          name="company_country"
-          value={form.company_country}
-          onChange={updateField}
-          className={inputClass.replace("pl-11", "pl-4")}
-          placeholder="e.g. Kenya"
-        />
+                  <div>
+                    <label
+                      htmlFor="company_country"
+                      className={labelClass}
+                    >
+                      Country
+                    </label>
 
-        {fieldError("company_country")}
-      </div>
-    </div>
-  </div>
-)}
+                    <input
+                      id="company_country"
+                      name="company_country"
+                      value={form.company_country}
+                      onChange={updateField}
+                      className={plainInputClass}
+                      placeholder="e.g. Kenya"
+                    />
 
+                    {fieldError("company_country")}
+                  </div>
+                </div>
+              </div>
+            )}
 
+            {/* PASSWORD */}
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="password" className={labelClass}>
                 Password
               </label>
+
               <div className="relative">
-                <LockKeyhole className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <LockKeyhole
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="password"
                   name="password"
@@ -586,31 +711,58 @@ export default function Signup() {
                   minLength={8}
                   required
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:text-slate-700"
+                  onClick={() =>
+                    setShowPassword((previous) => !previous)
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:text-[#5145E5]"
                 >
-                  {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                  {showPassword ? (
+                    <EyeOff size={19} />
+                  ) : (
+                    <Eye size={19} />
+                  )}
                 </button>
               </div>
-              <p className="mt-1 text-xs text-slate-400">
-                Use at least 8 characters and avoid common passwords.
+
+              <p className="mt-1.5 text-xs text-slate-400">
+                Use at least 8 characters and avoid
+                common passwords.
               </p>
+
               {fieldError("password")}
             </div>
 
+            {/* CONFIRM PASSWORD */}
             <div>
-              <label htmlFor="password_confirm" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label
+                htmlFor="password_confirm"
+                className={labelClass}
+              >
                 Confirm password
               </label>
+
               <div className="relative">
-                <LockKeyhole className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <LockKeyhole
+                  size={19}
+                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#5145E5]/60"
+                />
+
                 <input
                   id="password_confirm"
                   name="password_confirm"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={
+                    showConfirmPassword
+                      ? "text"
+                      : "password"
+                  }
                   value={form.password_confirm}
                   onChange={updateField}
                   className={`${inputClass} pr-12`}
@@ -618,60 +770,94 @@ export default function Signup() {
                   autoComplete="new-password"
                   required
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:text-slate-700"
+                  onClick={() =>
+                    setShowConfirmPassword(
+                      (previous) => !previous
+                    )
+                  }
+                  aria-label={
+                    showConfirmPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 transition hover:text-[#5145E5]"
                 >
-                  {showConfirmPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={19} />
+                  ) : (
+                    <Eye size={19} />
+                  )}
                 </button>
               </div>
+
               {fieldError("password_confirm")}
             </div>
 
-            <p className="text-xs leading-5 text-slate-500">
-              By creating an account, you agree to Quantahire's{" "}
-              <Link to="/terms" className="font-semibold text-[#147C91] hover:underline">
+            {/* TERMS */}
+            <p className="text-xs leading-6 text-slate-500">
+              By creating an account, you agree to
+              Quantahire's{" "}
+              <Link
+                to="/terms"
+                className="font-semibold text-[#5145E5] hover:underline"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link to="/privacy" className="font-semibold text-[#147C91] hover:underline">
+              <Link
+                to="/privacy"
+                className="font-semibold text-[#5145E5] hover:underline"
+              >
                 Privacy Policy
-              </Link>.
+              </Link>
+              .
             </p>
 
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#071A3D] px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#071A3D]/10 transition hover:bg-[#102b59] disabled:cursor-not-allowed disabled:opacity-70"
+              className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#5145E5] to-[#695CF0] px-5 py-4 text-sm font-bold text-white shadow-lg shadow-[#5145E5]/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-[#4338CA] hover:to-[#5145E5] hover:shadow-xl hover:shadow-[#5145E5]/25 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#5145E5]/20 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? (
                 <>
-                  <LoaderCircle className="animate-spin" size={19} />
+                  <LoaderCircle
+                    size={19}
+                    className="animate-spin"
+                  />
                   Creating account...
                 </>
               ) : (
                 <>
                   Create account
-                  <ArrowRight size={18} />
+                  <ArrowRight
+                    size={19}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
                 </>
               )}
             </button>
           </form>
 
-          <p className="mt-7 text-center text-sm text-slate-500">
-            Already have an account?{" "}
-            <Link
-              to="/signin"
-              className="font-bold text-[#147C91] hover:underline"
-            >
-              Sign in
-            </Link>
-          </p>
+          {/* SIGN IN LINK */}
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center">
+            <p className="text-sm text-slate-500">
+              Already have an account?{" "}
+              <Link
+                to="/signin"
+                className="font-bold text-[#5145E5] hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
 
-          <p className="mt-8 text-center text-xs text-slate-400 lg:hidden">
-            © {new Date().getFullYear()} Quantahire
+          <p className="mt-10 text-center text-xs text-slate-400 lg:hidden">
+            © {new Date().getFullYear()} Quantahire.
+            All rights reserved.
           </p>
         </div>
       </main>
