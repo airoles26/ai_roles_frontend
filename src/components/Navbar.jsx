@@ -60,7 +60,7 @@ export default function Navbar() {
     }`;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/70 bg-white/95 shadow-sm backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-[9999] w-full border-b border-slate-200/70 bg-white/95 shadow-md backdrop-blur-md">
       <nav className="mx-auto flex h-20 sm:h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           to="/"
