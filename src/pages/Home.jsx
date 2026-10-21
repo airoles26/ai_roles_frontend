@@ -180,14 +180,14 @@ function MatchRunPreview() {
   }, []);
 
   return (
-    <figure className="relative rounded-[24px] sm:rounded-[28px] bg-[#10162F] p-4 text-white shadow-[0_20px_50px_-20px_rgba(81,69,229,0.5)] sm:p-7 overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <figure className="relative rounded-[28px] bg-[#10162F] p-5 text-white shadow-[0_30px_80px_-30px_rgba(81,69,229,0.55)] sm:p-7">
+      <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-semibold text-slate-400">Example match run</p>
-          <p className={`${DISPLAY_FONT} mt-1 text-base sm:text-lg font-bold`}>Your best 3 roles out of 5</p>
+          <p className={`${DISPLAY_FONT} mt-1 text-lg font-bold`}>Your best 3 roles out of 5</p>
         </div>
         <span
-          className={`self-start sm:self-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-colors duration-500 ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-colors duration-500 ${
             done ? "bg-[#14E0C8]/15 text-[#14E0C8]" : "bg-white/10 text-slate-300"
           }`}
           aria-live="polite"
@@ -197,14 +197,14 @@ function MatchRunPreview() {
         </span>
       </div>
 
-      <ul className="mt-5 space-y-2.5">
+      <ul className="mt-6 space-y-2.5">
         {EXAMPLE_ROLES.map((role) => {
           const selected = done && role.pick;
           const skipped = done && !role.pick;
           return (
             <li
               key={role.title}
-              className={`rounded-xl sm:rounded-2xl border px-3.5 py-3 sm:px-4 transition-all duration-500 ${
+              className={`rounded-2xl border px-4 py-3 transition-all duration-500 ${
                 selected
                   ? "border-[#14E0C8]/50 bg-[#14E0C8]/[0.08]"
                   : skipped
@@ -214,13 +214,13 @@ function MatchRunPreview() {
             >
               <div className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs sm:text-sm font-bold">{role.title}</p>
-                  <p className="mt-0.5 truncate text-[11px] sm:text-xs text-slate-400">
+                  <p className="truncate text-sm font-bold">{role.title}</p>
+                  <p className="mt-0.5 truncate text-xs text-slate-400">
                     {skipped ? role.reason : role.meta}
                   </p>
                 </div>
-                <div className="w-16 sm:w-24 shrink-0">
-                  <div className="flex justify-end text-xs sm:text-sm font-bold tabular-nums">{role.score}</div>
+                <div className="w-24 shrink-0">
+                  <div className="flex justify-end text-sm font-bold tabular-nums">{role.score}</div>
                   <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-[#5145E5] to-[#14E0C8]"
@@ -228,8 +228,8 @@ function MatchRunPreview() {
                     />
                   </div>
                 </div>
-                <div className="flex h-5 w-5 sm:h-6 sm:w-6 shrink-0 items-center justify-center">
-                  {selected && <Check size={16} className="text-[#14E0C8] sm:w-[18px]" aria-label="Selected" />}
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+                  {selected && <Check size={18} className="text-[#14E0C8]" aria-label="Selected" />}
                 </div>
               </div>
             </li>
@@ -237,7 +237,7 @@ function MatchRunPreview() {
         })}
       </ul>
 
-      <figcaption className="mt-4 sm:mt-5 flex items-start gap-2 text-[11px] sm:text-xs leading-4 sm:leading-5 text-slate-400">
+      <figcaption className="mt-5 flex items-start gap-2 text-xs leading-5 text-slate-400">
         <BadgeCheck size={16} className="mt-0.5 shrink-0 text-[#14E0C8]" />
         QAOA skips near-duplicate roles and roles outside your constraints, then we confirm the
         pick against a classical solver.
@@ -310,7 +310,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#10162F] overflow-x-hidden">
+    <div className="min-h-screen bg-white text-[#10162F]">
       <Navbar />
 
       <main>
@@ -325,38 +325,39 @@ export default function Home() {
             }}
           />
 
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-8 sm:px-6 sm:pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
             <div>
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-[#5145E5]/20 bg-white px-3 py-1.5 text-xs font-bold text-[#5145E5] sm:text-sm">
-                <Atom size={14} className="text-[#109589] shrink-0" />
-                <span className="truncate">Quantahire 2.0, built with IBM Qiskit</span>
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/20 bg-white px-3.5 py-1.5 text-xs font-bold text-[#5145E5] sm:text-sm">
+                <Atom size={15} className="text-[#109589]" />
+                Quantahire 2.0, built with IBM Qiskit
               </p>
 
-              <h1 className={`${DISPLAY_FONT} mt-5 text-3xl font-extrabold leading-[1.08] tracking-[-0.035em] sm:text-5xl lg:text-[4.4rtrem]`}>
-                Quantahire is the world's first quantum powered job board
+              <h1 className={`${DISPLAY_FONT} mt-6 text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.4rem]`}>
+                The quantum-powered job board
               </h1>
 
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-lg sm:leading-8">
-                Quantahire operates as the world's first quantum powered job board, seamlessly uniting an extensive programmatic job repository with an autonomous AI Copilot suite ('Quantum Talent') and an enterprise IBM Qiskit QAOA matching engine.
+              <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                We pair AI match scoring with quantum optimisation built on IBM Qiskit to find
+                your strongest matches. Then our AI Copilot tailors your resume and applies in 1 click.
               </p>
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   onClick={() => checkout("trial")}
                   disabled={busyPlan === "trial"}
-                  className="w-full sm:w-auto rounded-xl bg-[#5145E5] px-6 py-3.5 text-center text-sm font-extrabold text-white shadow-lg shadow-[#5145E5]/25 transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-base"
+                  className="rounded-xl bg-[#5145E5] px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#5145E5]/25 transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-base"
                 >
                   {busyPlan === "trial" ? "Opening checkout…" : "Activate auto-apply, $9.99 for 7 days"}
                 </button>
                 <Link
                   to="/jobs"
-                  className="w-full sm:w-auto rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-extrabold text-[#10162F] transition hover:border-[#5145E5]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-base"
+                  className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-extrabold text-[#10162F] transition hover:border-[#5145E5]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-base"
                 >
                   {jobsLabel ? `Explore ${jobsLabel} live jobs` : "Explore live jobs"}
                 </Link>
               </div>
-              <p className="mt-2.5 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-slate-500">
                 Then $39.99/month from day 8. Cancel anytime.
               </p>
               {checkoutError && (
@@ -366,11 +367,11 @@ export default function Home() {
               {/* Search */}
               <form
                 onSubmit={handleSearch}
-                className="mt-8 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/[0.04] focus-within:border-[#5145E5]/50"
+                className="mt-10 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/[0.04] focus-within:border-[#5145E5]/50"
               >
-                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
-                  <label className="flex min-w-0 flex-[1.3] items-center gap-3 px-3 py-2 md:px-4 md:py-3">
-                    <Search size={18} className="shrink-0 text-[#5145E5]" />
+                <div className="flex flex-col md:flex-row md:items-center">
+                  <label className="flex min-w-0 flex-[1.3] items-center gap-3 px-4 py-3">
+                    <Search size={19} className="shrink-0 text-[#5145E5]" />
                     <span className="sr-only">Job title, tech stack or keyword</span>
                     <input
                       value={search}
@@ -380,8 +381,8 @@ export default function Home() {
                     />
                   </label>
                   <div className="hidden h-8 w-px bg-slate-200 md:block" />
-                  <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-slate-100 px-3 py-2 md:border-t-0 md:px-4 md:py-3">
-                    <MapPin size={18} className="shrink-0 text-[#109589]" />
+                  <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-slate-100 px-4 py-3 md:border-t-0">
+                    <MapPin size={19} className="shrink-0 text-[#109589]" />
                     <span className="sr-only">Location</span>
                     <input
                       value={place}
@@ -392,7 +393,7 @@ export default function Home() {
                   </label>
                   <button
                     type="submit"
-                    className="w-full md:w-auto rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-6 py-3.5 text-sm font-extrabold text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2"
+                    className="rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-6 py-3.5 text-sm font-extrabold text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2"
                   >
                     Search jobs
                   </button>
@@ -412,28 +413,26 @@ export default function Home() {
                 ))}
               </div>
 
-              <ul className="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-2 text-xs sm:text-sm font-semibold text-slate-600">
-                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589] shrink-0" />Applies via Workday, Greenhouse and Lever</li>
-                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589] shrink-0" />Listings re-checked daily</li>
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-slate-600">
+                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Applies via Workday, Greenhouse and Lever</li>
+                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Listings re-checked daily</li>
                 {jobsLabel && (
-                  <li className="flex items-center gap-2"><Check size={16} className="text-[#109589] shrink-0" />{jobsLabel} active roles</li>
+                  <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />{jobsLabel} active roles</li>
                 )}
               </ul>
             </div>
 
-            <div className="mt-4 lg:mt-0">
-              <MatchRunPreview />
-            </div>
+            <MatchRunPreview />
           </div>
         </section>
 
         {/* ---------------- STACK STRIP ---------------- */}
         <section aria-label="Technology" className="border-y border-slate-200 bg-[#F8FAFC]">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 sm:px-6 md:flex-row md:justify-between lg:px-8">
-            <p className="text-xs sm:text-sm font-semibold text-slate-500">Built on a modern, secure stack</p>
-            <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 sm:gap-x-8">
+          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-5 py-7 sm:px-6 md:flex-row md:justify-between lg:px-8">
+            <p className="text-sm font-semibold text-slate-500">Built on a modern, secure stack</p>
+            <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3">
               {STACK.map((name) => (
-                <li key={name} className={`${DISPLAY_FONT} text-sm sm:text-base font-bold text-slate-400`}>
+                <li key={name} className={`${DISPLAY_FONT} text-base font-bold text-slate-400 sm:text-lg`}>
                   {name}
                 </li>
               ))}
@@ -442,23 +441,23 @@ export default function Home() {
         </section>
 
         {/* ---------------- PILLARS ---------------- */}
-        <section className="py-14 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className={`${DISPLAY_FONT} max-w-2xl text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`}>
+        <section className="py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
               Better matches, fewer forms, no dead listings
             </h2>
 
-            <div className="mt-10 sm:mt-14 grid gap-x-12 gap-y-10 md:grid-cols-2 lg:gap-x-16">
+            <div className="mt-14 grid gap-x-16 gap-y-12 md:grid-cols-2">
               {PILLARS.map(({ icon: Icon, title, badge, body }) => (
-                <article key={title} className="border-t-2 border-[#10162F] pt-5 sm:pt-6">
+                <article key={title} className="border-t-2 border-[#10162F] pt-6">
                   <div className="flex items-center justify-between gap-4">
-                    <Icon size={24} className="text-[#5145E5] sm:w-[26px]" />
-                    <span className="rounded-full bg-[#109589]/10 px-3 py-1 text-[11px] sm:text-xs font-bold text-[#087F78]">
+                    <Icon size={26} className="text-[#5145E5]" />
+                    <span className="rounded-full bg-[#109589]/10 px-3 py-1 text-xs font-bold text-[#087F78]">
                       {badge}
                     </span>
                   </div>
-                  <h3 className={`${DISPLAY_FONT} mt-4 sm:mt-5 text-xl sm:text-2xl font-bold`}>{title}</h3>
-                  <p className="mt-2.5 sm:mt-3 max-w-[60ch] text-sm sm:text-base leading-6 sm:leading-7 text-slate-600">{body}</p>
+                  <h3 className={`${DISPLAY_FONT} mt-5 text-2xl font-bold`}>{title}</h3>
+                  <p className="mt-3 max-w-[60ch] leading-7 text-slate-600">{body}</p>
                 </article>
               ))}
             </div>
@@ -466,24 +465,24 @@ export default function Home() {
         </section>
 
         {/* ---------------- HOW IT WORKS ---------------- */}
-        <section id="how-it-works" className="scroll-mt-20 bg-[#10162F] py-16 text-white sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className={`${DISPLAY_FONT} max-w-2xl text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`}>
+        <section id="how-it-works" className="scroll-mt-20 bg-[#10162F] py-20 text-white sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
               How Quantahire works
             </h2>
-            <p className="mt-3 sm:mt-4 max-w-xl text-sm sm:text-base leading-6 sm:leading-7 text-slate-300">
+            <p className="mt-4 max-w-xl leading-7 text-slate-300">
               From CV to offer in four steps. You stay in control of which roles the Copilot applies to.
             </p>
 
-            <ol className="mt-10 sm:mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            <ol className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
               {STEPS.map(({ icon: Icon, title, body }, i) => (
                 <li key={title} className="relative">
                   <div className="flex items-center gap-3">
-                    <span className={`${DISPLAY_FONT} text-4xl sm:text-5xl font-extrabold text-[#14E0C8]`}>{i + 1}</span>
-                    <Icon size={20} className="text-slate-400 sm:w-[22px]" />
+                    <span className={`${DISPLAY_FONT} text-5xl font-extrabold text-[#14E0C8]`}>{i + 1}</span>
+                    <Icon size={22} className="text-slate-400" />
                   </div>
-                  <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-bold">{title}</h3>
-                  <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-5 sm:leading-6 text-slate-300">{body}</p>
+                  <h3 className="mt-4 text-lg font-bold">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
                 </li>
               ))}
             </ol>
@@ -491,13 +490,13 @@ export default function Home() {
         </section>
 
         {/* ---------------- PRICING ---------------- */}
-        <section id="pricing" className="scroll-mt-20 py-14 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section id="pricing" className="scroll-mt-20 py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
-              <h2 className={`${DISPLAY_FONT} text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`}>
+              <h2 className={`${DISPLAY_FONT} text-3xl font-extrabold tracking-tight sm:text-5xl`}>
                 Simple pricing, paid your way
               </h2>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base leading-6 sm:leading-7 text-slate-600">
+              <p className="mt-4 leading-7 text-slate-600">
                 Card, M-Pesa or mobile money through Paystack. Prices in US dollars.
               </p>
             </div>
@@ -506,11 +505,11 @@ export default function Home() {
               <p role="alert" className="mt-6 text-sm font-semibold text-red-600">{checkoutError}</p>
             )}
 
-            <div className="mt-10 sm:mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {PLANS.map((plan) => (
                 <article
                   key={plan.id}
-                  className={`flex flex-col rounded-3xl p-5 sm:p-6 ${
+                  className={`flex flex-col rounded-3xl p-6 ${
                     plan.featured
                       ? "bg-[#10162F] text-white ring-2 ring-[#14E0C8]/60"
                       : "border border-slate-200 bg-white"
@@ -522,18 +521,18 @@ export default function Home() {
                     </span>
                   )}
                   <h3 className="text-base font-bold">{plan.name}</h3>
-                  <p className="mt-3 sm:mt-4 flex items-baseline gap-2">
-                    <span className={`${DISPLAY_FONT} text-3xl sm:text-4xl font-extrabold`}>{plan.price}</span>
-                    <span className={`text-xs sm:text-sm ${plan.featured ? "text-slate-300" : "text-slate-500"}`}>{plan.period}</span>
+                  <p className="mt-4 flex items-baseline gap-2">
+                    <span className={`${DISPLAY_FONT} text-4xl font-extrabold`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.featured ? "text-slate-300" : "text-slate-500"}`}>{plan.period}</span>
                   </p>
-                  <p className={`mt-2.5 sm:mt-3 text-xs sm:text-sm leading-5 sm:leading-6 ${plan.featured ? "text-slate-300" : "text-slate-600"}`}>
+                  <p className={`mt-3 text-sm leading-6 ${plan.featured ? "text-slate-300" : "text-slate-600"}`}>
                     {plan.audience}
                   </p>
 
-                  <ul className="mt-5 sm:mt-6 flex-1 space-y-2.5 sm:space-y-3">
+                  <ul className="mt-6 flex-1 space-y-3">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex gap-2.5 text-xs sm:text-sm">
-                        <Check size={16} className={`mt-0.5 shrink-0 ${plan.featured ? "text-[#14E0C8]" : "text-[#109589]"}`} />
+                      <li key={f} className="flex gap-2.5 text-sm">
+                        <Check size={17} className={`mt-0.5 shrink-0 ${plan.featured ? "text-[#14E0C8]" : "text-[#109589]"}`} />
                         {f}
                       </li>
                     ))}
@@ -544,7 +543,7 @@ export default function Home() {
                       type="button"
                       onClick={() => checkout(plan.id)}
                       disabled={busyPlan === plan.id}
-                      className={`mt-6 sm:mt-8 rounded-xl px-4 py-3 text-xs sm:text-sm font-extrabold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 ${
+                      className={`mt-8 rounded-xl px-4 py-3 text-sm font-extrabold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 ${
                         plan.featured
                           ? "bg-[#14E0C8] text-[#10162F] hover:brightness-105"
                           : "bg-[#5145E5] text-white hover:bg-[#4338CA]"
@@ -555,13 +554,13 @@ export default function Home() {
                   ) : (
                     <Link
                       to={plan.to}
-                      className="mt-6 sm:mt-8 rounded-xl border border-slate-300 px-4 py-3 text-center text-xs sm:text-sm font-extrabold transition hover:border-[#5145E5]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+                      className="mt-8 rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-extrabold transition hover:border-[#5145E5]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
                     >
                       {plan.cta}
                     </Link>
                   )}
                   {plan.note && (
-                    <p className={`mt-2.5 sm:mt-3 text-[11px] sm:text-xs ${plan.featured ? "text-slate-400" : "text-slate-500"}`}>{plan.note}</p>
+                    <p className={`mt-3 text-xs ${plan.featured ? "text-slate-400" : "text-slate-500"}`}>{plan.note}</p>
                   )}
                 </article>
               ))}
@@ -570,19 +569,19 @@ export default function Home() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="border-t border-slate-200 bg-[#F8FAFC] py-14 sm:py-24">
-          <div className="mx-auto grid max-w-7xl gap-8 sm:gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-            <h2 className={`${DISPLAY_FONT} text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`}>
+        <section className="border-t border-slate-200 bg-[#F8FAFC] py-20 sm:py-24">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+            <h2 className={`${DISPLAY_FONT} text-3xl font-extrabold tracking-tight sm:text-5xl`}>
               Questions, answered
             </h2>
             <div className="divide-y divide-slate-200 border-y border-slate-200">
               {FAQS.map((item) => (
-                <details key={item.q} className="group py-4 sm:py-5">
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 sm:gap-6 text-left text-sm sm:text-lg font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] [&::-webkit-details-marker]:hidden">
+                <details key={item.q} className="group py-5">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-6 text-left text-base font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-lg [&::-webkit-details-marker]:hidden">
                     {item.q}
-                    <ChevronDown size={18} className="mt-1 shrink-0 text-slate-400 transition-transform group-open:rotate-180 sm:w-5" />
+                    <ChevronDown size={20} className="mt-1 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
                   </summary>
-                  <p className="mt-2.5 sm:mt-3 max-w-[68ch] text-xs sm:text-sm leading-6 sm:leading-7 text-slate-600">{item.a}</p>
+                  <p className="mt-3 max-w-[68ch] leading-7 text-slate-600">{item.a}</p>
                 </details>
               ))}
             </div>
@@ -590,23 +589,23 @@ export default function Home() {
         </section>
 
         {/* ---------------- FINAL CTA ---------------- */}
-        <section className="px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[24px] sm:rounded-[32px] bg-gradient-to-br from-[#5145E5] via-[#3B4FD8] to-[#087F78] px-5 py-12 text-center text-white sm:px-12 sm:py-16">
-            <h2 className={`${DISPLAY_FONT} mx-auto max-w-3xl text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`}>
+        <section className="px-5 py-20 sm:px-6 lg:px-8">
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-gradient-to-br from-[#5145E5] via-[#3B4FD8] to-[#087F78] px-6 py-16 text-center text-white sm:px-12">
+            <h2 className={`${DISPLAY_FONT} mx-auto max-w-3xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
               Ready to land your best-matched role?
             </h2>
-            <p className="mx-auto mt-3 sm:mt-4 max-w-xl text-sm sm:text-base leading-6 sm:leading-7 text-white/85">
+            <p className="mx-auto mt-4 max-w-xl leading-7 text-white/85">
               Quantum-optimised matching and a Copilot that applies for you, from $9.99 for your first week.
             </p>
             <button
               type="button"
               onClick={() => checkout("trial")}
               disabled={busyPlan === "trial"}
-              className="mt-6 sm:mt-8 w-full sm:w-auto rounded-xl bg-white px-7 py-3.5 text-sm sm:text-base font-extrabold text-[#10162F] transition hover:bg-[#E9FFFB] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#5145E5] disabled:opacity-60"
+              className="mt-8 rounded-xl bg-white px-7 py-3.5 text-sm font-extrabold text-[#10162F] transition hover:bg-[#E9FFFB] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#5145E5] disabled:opacity-60 sm:text-base"
             >
               {busyPlan === "trial" ? "Opening checkout…" : "Start 7-day access, $9.99"}
             </button>
-            <p className="mt-2.5 text-xs text-white/70">Then $39.99/month from day 8. Cancel anytime.</p>
+            <p className="mt-3 text-xs text-white/70">Then $39.99/month from day 8. Cancel anytime.</p>
           </div>
         </section>
       </main>

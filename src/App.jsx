@@ -7,6 +7,7 @@ import {
 
 // layouts
 import CompanyLayout from "./components/layouts/CompanyLayout";
+import WorkerLayout from "./components/layouts/WorkerLayout";
 
 import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
@@ -20,6 +21,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 // company
 import CompanyDashboard from "./pages/company/Dashboard";
 import PostJob from "./pages/company/PostJob";
+
+// worker
+import WorkerDashboard from "./pages/worker/WorkerDashboard";
 
 
 export default function App() {
@@ -50,6 +54,10 @@ export default function App() {
             <Route path="dashboard" element={<CompanyDashboard />}/>
             <Route path="jobs/new" element={<PostJob />} />
 
+        </Route>
+
+        <Route path="/worker" element={<WorkerLayout />}>
+            <Route path="dashboard" element={<WorkerDashboard />} />
         </Route>
 
 

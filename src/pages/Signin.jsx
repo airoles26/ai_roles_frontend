@@ -174,7 +174,7 @@ const handleSubmit = async (event) => {
         replace: true,
       });
     } else {
-      navigate("/jobs", {
+      navigate("/worker/dashboard", {
         replace: true,
       });
     }
