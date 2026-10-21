@@ -15,6 +15,7 @@ import JobDetails from "./pages/JobDetails";
 // auth
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // company
 import CompanyDashboard from "./pages/company/Dashboard";
@@ -41,6 +42,7 @@ export default function App() {
         />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* company */}
         <Route path="/company" element={<CompanyLayout />}>

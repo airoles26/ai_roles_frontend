@@ -90,103 +90,128 @@ export default function Signup() {
     setError("");
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setFieldErrors({});
+  
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    if (form.password !== form.password_confirm) {
-      setFieldErrors({
-        password_confirm: "Your passwords do not match.",
-      });
-      return;
-    }
+  setError("");
+  setFieldErrors({});
 
-    if (form.password.length < 8) {
-      setFieldErrors({
-        password: "Your password must contain at least 8 characters.",
-      });
-      return;
-    }
+  // ---------------------------------------
+  // 1. Validate passwords
+  // ---------------------------------------
+  if (form.password !== form.password_confirm) {
+    setFieldErrors({
+      password_confirm: "Your passwords do not match.",
+    });
+    return;
+  }
 
-    setLoading(true);
+  if (form.password.length < 8) {
+    setFieldErrors({
+      password:
+        "Your password must contain at least 8 characters.",
+    });
+    return;
+  }
 
-    const payload = {
-      full_name: form.full_name.trim(),
-      username: form.username.trim(),
-      email: form.email.trim().toLowerCase(),
-      phone_number: form.phone_number.trim(),
-      role: form.role,
-      password: form.password,
-      password_confirm: form.password_confirm,
-      ...(form.role === "employer" && {
-        company_name: form.company_name.trim(),
-        company_website: form.company_website.trim(),
-        company_description: form.company_description.trim(),
-        company_location: form.company_location.trim(),
-        company_country: form.company_country.trim(),
-      }),
-    };
+  setLoading(true);
 
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/auth/signup/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+  // ---------------------------------------
+  // 2. Prepare signup payload
+  // ---------------------------------------
+  const payload = {
+    full_name: form.full_name.trim(),
+    username: form.username.trim(),
+    email: form.email.trim().toLowerCase(),
+    phone_number: form.phone_number.trim(),
+    role: form.role,
+    password: form.password,
+    password_confirm: form.password_confirm,
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errors = data.errors || {};
-
-        setFieldErrors(
-          Object.fromEntries(
-            Object.entries(errors).map(([key, value]) => [
-              key,
-              Array.isArray(value)
-                ? value.join(" ")
-                : String(value),
-            ])
-          )
-        );
-
-        setError(
-          data.message ||
-            (!Object.keys(errors).length
-              ? "Please check your details and try again."
-              : "")
-        );
-
-        return;
-      }
-
-      localStorage.setItem("access", data.tokens.access);
-      localStorage.setItem("refresh", data.tokens.refresh);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      sessionStorage.removeItem("access");
-      sessionStorage.removeItem("refresh");
-      sessionStorage.removeItem("user");
-
-      if (data.user.role === "employer") {
-        navigate("/company/dashboard", { replace: true });
-      } else {
-        navigate("/jobs", { replace: true });
-      }
-    } catch {
-      setError(
-        "Unable to connect to Quantahire. Please check your internet connection and try again."
-      );
-    } finally {
-      setLoading(false);
-    }
+    ...(form.role === "employer" && {
+      company_name: form.company_name.trim(),
+      company_website: form.company_website.trim(),
+      company_description: form.company_description.trim(),
+      company_location: form.company_location.trim(),
+      company_country: form.company_country.trim(),
+    }),
   };
+
+  try {
+    // ---------------------------------------
+    // 3. Submit signup request
+    // ---------------------------------------
+    const response = await fetch(
+      `${API_BASE_URL}/auth/signup/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await response.json();
+
+    // ---------------------------------------
+    // 4. Handle validation errors
+    // ---------------------------------------
+    if (!response.ok) {
+      const errors = data.errors || {};
+
+      setFieldErrors(
+        Object.fromEntries(
+          Object.entries(errors).map(([key, value]) => [
+            key,
+            Array.isArray(value)
+              ? value.join(" ")
+              : String(value),
+          ])
+        )
+      );
+
+      setError(
+        data.message ||
+          (!Object.keys(errors).length
+            ? "Please check your details and try again."
+            : "")
+      );
+
+      return;
+    }
+
+    // ---------------------------------------
+    // 5. Signup successful
+    // ---------------------------------------
+    if (data.success) {
+      console.log("Signup successful:", data);
+
+      // Do not store JWT tokens here.
+      // User must verify their email before signing in.
+
+      navigate(
+        `/signin`,
+      );
+
+      return;
+    }
+
+    setError(
+      data.message || "Signup failed. Please try again."
+    );
+  } catch (err) {
+    console.error("Signup error:", err);
+
+    setError(
+      "Unable to connect to Quantahire. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const inputClass =
     "w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-900 outline-none transition-all duration-200 placeholder:text-slate-400 hover:border-indigo-200 focus:border-[#5145E5] focus:ring-4 focus:ring-[#5145E5]/10";

@@ -51,91 +51,144 @@ export default function Signin() {
     setError("");
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setLoading(true);
+ 
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/auth/token/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: form.username.trim(),
-            password: form.password,
-          }),
-        }
-      );
+  setError("");
+  setLoading(true);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(
-          data.detail ||
-          "Invalid username or password. Please try again."
-        );
-        return;
+  try {
+    // --------------------------------------
+    // 1. Sign in
+    // --------------------------------------
+    const response = await fetch(
+      `${API_BASE_URL}/auth/signin/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: form.username.trim().toLowerCase(),
+          password: form.password,
+        }),
       }
+    );
 
-      const profileResponse = await fetch(
-        `${API_BASE_URL}/auth/me/`,
-        {
-          headers: {
-            Authorization: `Bearer ${data.access}`,
-          },
-        }
-      );
+    const data = await response.json();
 
-      if (!profileResponse.ok) {
+    // --------------------------------------
+    // 2. Handle authentication errors
+    // --------------------------------------
+    if (!response.ok) {
+      if (data.email_verification_required) {
         setError(
-          "Signed in, but your profile could not be loaded."
+          "Your email is not verified. Please check your inbox for the verification link."
         );
-        return;
-      }
-
-      const user = await profileResponse.json();
-
-      const storage = rememberMe
-        ? localStorage
-        : sessionStorage;
-
-      const otherStorage = rememberMe
-        ? sessionStorage
-        : localStorage;
-
-      storage.setItem("access", data.access);
-      storage.setItem("refresh", data.refresh);
-      storage.setItem("user", JSON.stringify(user));
-
-      otherStorage.removeItem("access");
-      otherStorage.removeItem("refresh");
-      otherStorage.removeItem("user");
-
-      if (user.role === "employer") {
-        navigate("/company/dashboard", {
-          replace: true,
-        });
-      } else if (user.role === "admin") {
-        navigate("/admin/admin-dashboard", {
-          replace: true,
-        });
       } else {
-        navigate("/jobs", {
-          replace: true,
-        });
+        setError(
+          data.message ||
+          data.detail ||
+          "Invalid email or password. Please try again."
+        );
       }
-    } catch {
-      setError(
-        "Unable to connect to Quantahire. Check your internet connection."
-      );
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+
+    // --------------------------------------
+    // 3. Extract JWT tokens
+    // --------------------------------------
+    const accessToken =
+      data.access_token ||
+      data.tokens?.access ||
+      data.access;
+
+    const refreshToken =
+      data.refresh_token ||
+      data.tokens?.refresh ||
+      data.refresh;
+
+    if (!accessToken || !refreshToken) {
+      setError(
+        "Login succeeded, but authentication tokens were not returned."
+      );
+      return;
+    }
+
+    // --------------------------------------
+    // 4. Fetch authenticated user profile
+    // --------------------------------------
+    const profileResponse = await fetch(
+      `${API_BASE_URL}/auth/me/`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!profileResponse.ok) {
+      setError(
+        "Signed in, but your profile could not be loaded."
+      );
+      return;
+    }
+
+    const profileData = await profileResponse.json();
+
+    // Supports both flat and nested profile responses
+    const user = profileData.user || profileData;
+
+    // --------------------------------------
+    // 5. Save authentication information
+    // --------------------------------------
+    const storage = rememberMe
+      ? localStorage
+      : sessionStorage;
+
+    const otherStorage = rememberMe
+      ? sessionStorage
+      : localStorage;
+
+    storage.setItem("access", accessToken);
+    storage.setItem("refresh", refreshToken);
+    storage.setItem("user", JSON.stringify(user));
+
+    otherStorage.removeItem("access");
+    otherStorage.removeItem("refresh");
+    otherStorage.removeItem("user");
+
+    // --------------------------------------
+    // 6. Redirect based on user role
+    // --------------------------------------
+    if (user.role === "employer") {
+      navigate("/company/dashboard", {
+        replace: true,
+      });
+    } else if (
+      user.role === "admin" ||
+      user.is_superuser
+    ) {
+      navigate("/admin/admin-dashboard", {
+        replace: true,
+      });
+    } else {
+      navigate("/jobs", {
+        replace: true,
+      });
+    }
+  } catch (error) {
+    console.error("Signin error:", error);
+
+    setError(
+      "Unable to connect to Quantahire. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const inputClass =
     "w-full rounded-2xl border border-slate-200 bg-white py-4 pl-12 pr-12 text-sm text-slate-900 outline-none transition-all duration-200 placeholder:text-slate-400 hover:border-indigo-200 focus:border-[#5145E5] focus:ring-4 focus:ring-[#5145E5]/10";
@@ -305,7 +358,7 @@ export default function Signin() {
                 htmlFor="username"
                 className="mb-2.5 block text-sm font-semibold text-[#18124A]"
               >
-                Username or email
+                Email Address
               </label>
 
               <div className="relative">
@@ -320,8 +373,8 @@ export default function Signin() {
                   type="text"
                   value={form.username}
                   onChange={handleChange}
-                  placeholder="Enter your username"
-                  autoComplete="username"
+                  placeholder="Enter your email"
+                  autoComplete="email"
                   autoFocus
                   required
                   className={inputClass}
