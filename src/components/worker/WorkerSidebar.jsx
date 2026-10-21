@@ -11,7 +11,7 @@ const sections = [
     { label: "Find Jobs", to: "/jobs", icon: Search },
     { label: "My Applications", to: "/worker/applications", icon: BriefcaseBusiness },
     { label: "Saved Jobs", to: "/worker/saved-jobs", icon: Bookmark },
-    { label: "Quantum Matches", to: "/worker/matches", icon: Atom },
+    { label: "Quantum Matches", to: "/worker/quantum-matches", icon: Atom },
   ] },
   { label: "ACCOUNT", links: [
     { label: "My Profile", to: "/worker/profile", icon: UserRound },

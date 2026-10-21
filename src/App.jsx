@@ -24,6 +24,8 @@ import PostJob from "./pages/company/PostJob";
 
 // worker
 import WorkerDashboard from "./pages/worker/WorkerDashboard";
+import MyApplications from "./pages/worker/MyApplications";
+import QuantumMatches from "./pages/worker/QuantumMatches";
 
 
 export default function App() {
@@ -58,6 +60,8 @@ export default function App() {
 
         <Route path="/worker" element={<WorkerLayout />}>
             <Route path="dashboard" element={<WorkerDashboard />} />
+            <Route path="applications" element={<MyApplications />} />
+            <Route path="quantum-matches" element={<QuantumMatches />} />
         </Route>
 
 
