@@ -58,8 +58,10 @@ export default function QuantumMatches() {
   const [detailError, setDetailError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
+
   const load = useCallback(async (signal) => {
     setLoading(true); setError("");
+    <></>
     try {
       const { data } = await api.get("/worker/quantum-matches/", {
         params: { page, page_size: 8, ...(statusFilter && { status: statusFilter }), ...(problemFilter && { problem_type: problemFilter }), ...(executionFilter && { execution: executionFilter }) },

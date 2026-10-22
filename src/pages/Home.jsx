@@ -309,122 +309,304 @@ export default function Home() {
     }
   };
 
+
+  const heroImages = [
+  "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=85",
+  "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85",
+  "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=1920&q=85",
+];
+
+const [currentSlide, setCurrentSlide] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
+
+
   return (
     <div className="min-h-screen bg-white text-[#10162F]">
       <Navbar />
 
       <main>
         {/* ---------------- HERO ---------------- */}
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10"
-            style={{
-              background:
-                "radial-gradient(60rem 30rem at 85% -10%, rgba(20,224,200,0.12), transparent 60%), radial-gradient(50rem 30rem at -10% 10%, rgba(81,69,229,0.10), transparent 60%)",
-            }}
+        
+
+<section className="relative isolate w-full min-w-0 overflow-hidden bg-[#07132C] text-white">
+
+  {/* Background image slider */}
+  <div
+    aria-hidden="true"
+     className="pointer-events-none absolute inset-0 -z-10 bg-[#061329]/40 sm:bg-gradient-to-r sm:from-[#061329]/65 sm:via-[#071A35]/40 sm:to-[#061329]/20"
+  >
+    {heroImages.map((image, index) => (
+      <div
+        key={image}
+        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1500ms] ease-in-out ${
+          currentSlide === index ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          backgroundImage: `url("${image}")`,
+          transform:
+            currentSlide === index ? "scale(1.04)" : "scale(1)",
+          transition:
+            "opacity 1500ms ease-in-out, transform 6000ms ease-out",
+        }}
+      />
+    ))}
+  </div>
+
+  {/* Dark responsive overlay */}
+  <div
+  aria-hidden="true"
+  className="
+    pointer-events-none absolute inset-0 -z-10
+    bg-[#061329]/40
+    lg:bg-gradient-to-r
+    lg:from-[#061329]/45
+    lg:via-[#071A35]/20
+    lg:to-transparent
+  "
+/>
+
+  {/* Decorative gradients */}
+  {/* Subtle decorative gradients */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 -z-10"
+  style={{
+    background:
+      "radial-gradient(60rem 30rem at 85% -10%, rgba(20,224,200,0.05), transparent 60%), radial-gradient(50rem 30rem at -10% 10%, rgba(81,69,229,0.05), transparent 60%)",
+  }}
+/>
+
+  {/* Main hero container */}
+  <div className="relative mx-auto grid w-full max-w-7xl min-w-0 grid-cols-1 items-center gap-8 px-4 pb-20 pt-10 min-[375px]:px-5 sm:gap-10 sm:px-6 sm:pb-24 sm:pt-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-10 lg:px-8 lg:pb-28 lg:pt-20 xl:gap-14">
+
+    {/* Left content */}
+    <div className="relative z-10 min-w-0 w-full">
+
+      {/* Badge */}
+      <div className="flex">
+        <p className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[10px] font-bold leading-4 text-white backdrop-blur-md min-[375px]:text-xs sm:px-3.5 sm:text-sm">
+          <Atom
+            size={15}
+            className="shrink-0 text-[#14E0C8]"
           />
+          <span>
+            Quantahire 2.0, built with IBM Qiskit
+          </span>
+        </p>
+      </div>
 
-          <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/20 bg-white px-3.5 py-1.5 text-xs font-bold text-[#5145E5] sm:text-sm">
-                <Atom size={15} className="text-[#109589]" />
-                Quantahire 2.0, built with IBM Qiskit
-              </p>
+      {/* Heading */}
+      <h1
+        className={`${DISPLAY_FONT} mt-5 max-w-3xl break-words text-[clamp(2rem,8vw,4.4rem)] font-extrabold leading-[1.08] tracking-[-0.035em] text-white sm:mt-6 lg:leading-[1.04]`}
+      >
+        The quantum-powered{" "}
+        <span className="bg-gradient-to-r from-[#14E0C8] to-[#A5A0FF] bg-clip-text text-transparent">
+          job board
+        </span>
+      </h1>
 
-              <h1 className={`${DISPLAY_FONT} mt-6 text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.4rem]`}>
-                The quantum-powered job board
-              </h1>
+      {/* Description */}
+      <p className="mt-5 max-w-xl text-sm leading-6 text-slate-200 sm:mt-6 sm:text-base sm:leading-7 lg:text-lg lg:leading-8">
+        We pair AI match scoring with quantum optimisation built
+        on IBM Qiskit to find your strongest matches. Then our
+        AI Copilot tailors your resume and applies in 1 click.
+      </p>
 
-              <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-                We pair AI match scoring with quantum optimisation built on IBM Qiskit to find
-                your strongest matches. Then our AI Copilot tailors your resume and applies in 1 click.
-              </p>
+      {/* CTA buttons */}
+      <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={() => checkout("trial")}
-                  disabled={busyPlan === "trial"}
-                  className="rounded-xl bg-[#5145E5] px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-[#5145E5]/25 transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 disabled:opacity-60 sm:text-base"
-                >
-                  {busyPlan === "trial" ? "Opening checkout…" : "Activate auto-apply, $9.99 for 7 days"}
-                </button>
-                <Link
-                  to="/jobs"
-                  className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-extrabold text-[#10162F] transition hover:border-[#5145E5]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-base"
-                >
-                  {jobsLabel ? `Explore ${jobsLabel} live jobs` : "Explore live jobs"}
-                </Link>
-              </div>
-              <p className="mt-3 text-xs text-slate-500">
-                Then $39.99/month from day 8. Cancel anytime.
-              </p>
-              {checkoutError && (
-                <p role="alert" className="mt-3 text-sm font-semibold text-red-600">{checkoutError}</p>
-              )}
+        <button
+          type="button"
+          onClick={() => checkout("trial")}
+          disabled={busyPlan === "trial"}
+          className="flex min-h-12 w-full min-w-0 items-center justify-center rounded-xl bg-[#5145E5] px-4 py-3 text-center text-xs font-extrabold leading-5 text-white shadow-lg shadow-[#5145E5]/25 transition hover:bg-[#4338CA] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14E0C8] disabled:opacity-60 min-[375px]:text-sm sm:w-auto sm:px-5 lg:px-6"
+        >
+          {busyPlan === "trial"
+            ? "Opening checkout…"
+            : "Activate auto-apply, $9.99 for 7 days"}
+        </button>
 
-              {/* Search */}
-              <form
-                onSubmit={handleSearch}
-                className="mt-10 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/[0.04] focus-within:border-[#5145E5]/50"
-              >
-                <div className="flex flex-col md:flex-row md:items-center">
-                  <label className="flex min-w-0 flex-[1.3] items-center gap-3 px-4 py-3">
-                    <Search size={19} className="shrink-0 text-[#5145E5]" />
-                    <span className="sr-only">Job title, tech stack or keyword</span>
-                    <input
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Job title, tech stack or keyword (e.g. Python)"
-                      className="w-full min-w-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400 sm:text-base"
-                    />
-                  </label>
-                  <div className="hidden h-8 w-px bg-slate-200 md:block" />
-                  <label className="flex min-w-0 flex-1 items-center gap-3 border-t border-slate-100 px-4 py-3 md:border-t-0">
-                    <MapPin size={19} className="shrink-0 text-[#109589]" />
-                    <span className="sr-only">Location</span>
-                    <input
-                      value={place}
-                      onChange={(e) => setPlace(e.target.value)}
-                      placeholder="Remote, Nairobi, London"
-                      className="w-full min-w-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400 sm:text-base"
-                    />
-                  </label>
-                  <button
-                    type="submit"
-                    className="rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-6 py-3.5 text-sm font-extrabold text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2"
-                  >
-                    Search jobs
-                  </button>
-                </div>
-              </form>
+        <Link
+          to="/jobs"
+          className="flex min-h-12 w-full min-w-0 items-center justify-center rounded-xl border border-white/30 bg-white/10 px-4 py-3 text-center text-xs font-extrabold leading-5 text-white backdrop-blur-md transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14E0C8] min-[375px]:text-sm sm:w-auto sm:px-5 lg:px-6"
+        >
+          {jobsLabel
+            ? `Explore ${jobsLabel} live jobs`
+            : "Explore live jobs"}
+        </Link>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {QUICK_TAGS.map((tag) => (
-                  <button
-                    key={tag.label}
-                    type="button"
-                    onClick={() => goToJobs(tag.params)}
-                    className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 transition hover:border-[#5145E5]/40 hover:text-[#5145E5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-sm"
-                  >
-                    {tag.label}
-                  </button>
-                ))}
-              </div>
+      </div>
 
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-slate-600">
-                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Applies via Workday, Greenhouse and Lever</li>
-                <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />Listings re-checked daily</li>
-                {jobsLabel && (
-                  <li className="flex items-center gap-2"><Check size={16} className="text-[#109589]" />{jobsLabel} active roles</li>
-                )}
-              </ul>
-            </div>
+      {/* Subscription info */}
+      <p className="mt-3 text-xs leading-5 text-slate-300">
+        Then $39.99/month from day 8. Cancel anytime.
+      </p>
 
-            <MatchRunPreview />
-          </div>
-        </section>
+      {checkoutError && (
+        <p
+          role="alert"
+          className="mt-3 break-words text-sm font-semibold text-red-300"
+        >
+          {checkoutError}
+        </p>
+      )}
+
+      {/* Search form */}
+      <form
+        onSubmit={handleSearch}
+        className="mt-8 w-full min-w-0 rounded-2xl border border-white/20 bg-white p-2 text-slate-900 shadow-2xl shadow-black/20 focus-within:border-[#5145E5]/50 sm:mt-10"
+      >
+        <div className="flex w-full min-w-0 flex-col lg:flex-row lg:items-center">
+
+          {/* Job keyword */}
+          <label className="flex min-h-12 w-full min-w-0 items-center gap-3 px-3 py-3 sm:px-4 lg:min-w-0 lg:flex-[1.3]">
+            <Search
+              size={19}
+              className="shrink-0 text-[#5145E5]"
+            />
+
+            <span className="sr-only">
+              Job title, tech stack or keyword
+            </span>
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Job title, tech stack or keyword"
+              className="w-full min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 sm:text-base"
+            />
+          </label>
+
+          {/* Divider */}
+          <div className="mx-3 h-px bg-slate-200 lg:mx-0 lg:h-8 lg:w-px lg:shrink-0" />
+
+          {/* Location */}
+          <label className="flex min-h-12 w-full min-w-0 items-center gap-3 px-3 py-3 sm:px-4 lg:min-w-0 lg:flex-1">
+            <MapPin
+              size={19}
+              className="shrink-0 text-[#109589]"
+            />
+
+            <span className="sr-only">
+              Location
+            </span>
+
+            <input
+              value={place}
+              onChange={(e) => setPlace(e.target.value)}
+              placeholder="Remote, Nairobi, London"
+              className="w-full min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 sm:text-base"
+            />
+          </label>
+
+          {/* Search button */}
+          <button
+            type="submit"
+            className="mt-1 flex min-h-12 w-full shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-[#5145E5] to-[#109589] px-5 py-3.5 text-sm font-extrabold text-white transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2 lg:mt-0 lg:w-auto"
+          >
+            Search jobs
+          </button>
+
+        </div>
+      </form>
+
+      {/* Quick tags */}
+      <div className="mt-4 flex w-full flex-wrap gap-2">
+        {QUICK_TAGS.map((tag) => (
+          <button
+            key={tag.label}
+            type="button"
+            onClick={() => goToJobs(tag.params)}
+            className="max-w-full rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold leading-5 text-white backdrop-blur-sm transition hover:border-[#14E0C8] hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14E0C8] sm:px-3.5 sm:text-sm"
+          >
+            {tag.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Features */}
+      <ul className="mt-7 flex flex-col gap-3 text-xs font-semibold leading-5 text-slate-200 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-3 sm:text-sm">
+
+        <li className="flex items-start gap-2">
+          <Check
+            size={16}
+            className="mt-0.5 shrink-0 text-[#14E0C8]"
+          />
+          <span>
+            Applies via Workday, Greenhouse and Lever
+          </span>
+        </li>
+
+        <li className="flex items-start gap-2">
+          <Check
+            size={16}
+            className="mt-0.5 shrink-0 text-[#14E0C8]"
+          />
+          <span>
+            Listings re-checked daily
+          </span>
+        </li>
+
+        {jobsLabel && (
+          <li className="flex items-start gap-2">
+            <Check
+              size={16}
+              className="mt-0.5 shrink-0 text-[#14E0C8]"
+            />
+            <span>{jobsLabel} active roles</span>
+          </li>
+        )}
+
+      </ul>
+
+    </div>
+
+    {/* Right preview */}
+    <div className="relative z-10 w-full min-w-0 max-w-full overflow-hidden lg:overflow-visible">
+      <div className="mx-auto w-full min-w-0 max-w-xl lg:max-w-none">
+        <MatchRunPreview />
+      </div>
+    </div>
+
+  </div>
+
+  {/* Slider navigation dots */}
+  <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center justify-center gap-2 sm:bottom-6 sm:gap-3">
+    {heroImages.map((_, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => setCurrentSlide(index)}
+        aria-label={`Go to slide ${index + 1}`}
+        aria-current={
+          currentSlide === index ? "true" : undefined
+        }
+        className="flex h-8 w-10 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14E0C8]"
+      >
+        <span
+          className={`block h-2.5 rounded-full transition-all duration-300 ${
+            currentSlide === index
+              ? "w-8 bg-[#14E0C8]"
+              : "w-2.5 bg-white/50"
+          }`}
+        />
+      </button>
+    ))}
+  </div>
+
+</section>
+
+
 
         {/* ---------------- STACK STRIP ---------------- */}
         <section aria-label="Technology" className="border-y border-slate-200 bg-[#F8FAFC]">
