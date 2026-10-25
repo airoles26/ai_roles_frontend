@@ -17,6 +17,7 @@ import About from "./pages/About";
 import Enterprise from "./pages/Enterprise";
 import Copilot from "./pages/Copilot";
 
+
 // auth
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
@@ -30,6 +31,7 @@ import PostJob from "./pages/company/PostJob";
 import WorkerDashboard from "./pages/worker/WorkerDashboard";
 import MyApplications from "./pages/worker/MyApplications";
 import QuantumMatches from "./pages/worker/QuantumMatches";
+import WorkerProfile from "./pages/worker/WorkerProfile";
 
 
 export default function App() {
@@ -78,6 +80,7 @@ export default function App() {
             <Route path="dashboard" element={<WorkerDashboard />} />
             <Route path="applications" element={<MyApplications />} />
             <Route path="quantum-matches" element={<QuantumMatches />} />
+            <Route path="profile" element={<WorkerProfile />} />
         </Route>
 
 

@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 
+import Navbar, { DISPLAY_FONT } from "../components/Navbar";
 import JobCard, { timeAgo } from "../components/JobCard";
 import CopilotBanner from "../components/CopilotBanner";
 import api from "../api/api";
