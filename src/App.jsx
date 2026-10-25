@@ -8,6 +8,7 @@ import {
 // layouts
 import CompanyLayout from "./components/layouts/CompanyLayout";
 import WorkerLayout from "./components/layouts/WorkerLayout";
+import MainLayout from "./layouts/MainLayout";
 
 import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
@@ -32,6 +33,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* public pages */}
+        <Route element={<MainLayout />}>
         <Route
           path="/"
           element={<Home />}
@@ -46,6 +50,11 @@ export default function App() {
           path="/jobs/:slug"
           element={<JobDetails />}
         />
+
+        </Route>
+
+
+        {/* authentication pages */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
