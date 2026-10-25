@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { label: "Quantum Talent Copilot", to: "/copilot" },
   { label: "Enterprise sourcing", to: "/enterprise" },
   { label: "Pricing", to: "/#pricing" },
+  { label: "About Us", to: "/about" },
   { label: "How QAOA works", to: "/#how-it-works" },
 ];
 

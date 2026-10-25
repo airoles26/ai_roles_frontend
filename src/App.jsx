@@ -13,6 +13,7 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
+import About from "./pages/About";
 
 // auth
 import Signup from "./pages/Signup";
@@ -50,6 +51,8 @@ export default function App() {
           path="/jobs/:slug"
           element={<JobDetails />}
         />
+
+        <Route path="/about" element={<About />} />
 
         </Route>
 
