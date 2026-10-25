@@ -417,9 +417,7 @@ useEffect(() => {
 
       {/* Description */}
       <p className="mt-5 max-w-xl text-sm leading-6 text-slate-200 sm:mt-6 sm:text-base sm:leading-7 lg:text-lg lg:leading-8">
-        We pair AI match scoring with quantum optimisation built
-        on IBM Qiskit to find your strongest matches. Then our
-        AI Copilot tailors your resume and applies in 1 click.
+        Quantahire operates as the world's first quantum powered job board, seamlessly uniting an extensive programmatic job repository with an autonomous AI Copilot suite ('Quantum Talent') and an enterprise IBM Qiskit QAOA matching engine
       </p>
 
       {/* CTA buttons */}
