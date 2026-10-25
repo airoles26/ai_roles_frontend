@@ -14,8 +14,6 @@ import {
   Zap,
 } from "lucide-react";
 
-import Navbar, { DISPLAY_FONT } from "../components/Navbar";
-import Footer from "../components/Footer";
 import JobCard, { timeAgo } from "../components/JobCard";
 import CopilotBanner from "../components/CopilotBanner";
 import api from "../api/api";
@@ -243,7 +241,6 @@ export default function Jobs() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#10162F]">
-      <Navbar />
 
       <main>
         {/* ---------------- HERO + SEARCH ---------------- */}
@@ -515,7 +512,6 @@ export default function Jobs() {
         </div>
       )}
 
-      <Footer />
     </div>
   );
 }

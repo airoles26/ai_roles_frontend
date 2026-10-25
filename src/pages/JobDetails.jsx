@@ -21,8 +21,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 import api from "../api/api";
 
 const BRAND = {
@@ -278,7 +277,6 @@ export default function JobDetails() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F7FAFC]">
-        <Navbar />
 
         <main>
           <div className="mx-auto max-w-7xl px-5 py-10 sm:px-6 lg:px-8">
@@ -317,7 +315,6 @@ export default function JobDetails() {
           </div>
         </main>
 
-        <Footer />
       </div>
     );
   }
@@ -331,7 +328,6 @@ export default function JobDetails() {
   if (error || !job) {
     return (
       <div className="min-h-screen bg-[#F7FAFC]">
-        <Navbar />
 
         <main className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-lg rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
@@ -372,7 +368,7 @@ export default function JobDetails() {
           </div>
         </main>
 
-        <Footer />
+  
       </div>
     );
   }
@@ -397,7 +393,6 @@ export default function JobDetails() {
 
   return (
     <div className="min-h-screen bg-[#F7FAFC]">
-      <Navbar />
 
       <main>
         {/* TOP AREA */}
@@ -829,8 +824,6 @@ export default function JobDetails() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
