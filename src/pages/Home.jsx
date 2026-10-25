@@ -409,9 +409,9 @@ useEffect(() => {
       <h1
         className={`${DISPLAY_FONT} mt-5 max-w-3xl break-words text-[clamp(2rem,8vw,4.4rem)] font-extrabold leading-[1.08] tracking-[-0.035em] text-white sm:mt-6 lg:leading-[1.04]`}
       >
-        The quantum-powered{" "}
+        Quantahire{" "}
         <span className="bg-gradient-to-r from-[#14E0C8] to-[#A5A0FF] bg-clip-text text-transparent">
-          job board
+          is the word's first quantum powered job board
         </span>
       </h1>
 
