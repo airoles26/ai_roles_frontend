@@ -14,6 +14,8 @@ import Home from "./pages/Home";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import About from "./pages/About";
+import Enterprise from "./pages/Enterprise";
+import Copilot from "./pages/Copilot";
 
 // auth
 import Signup from "./pages/Signup";
@@ -53,6 +55,8 @@ export default function App() {
         />
 
         <Route path="/about" element={<About />} />
+        <Route path="/enterprise" element={<Enterprise />} />
+        <Route path="/copilot" element={<Copilot />} />
 
         </Route>
 
