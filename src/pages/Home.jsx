@@ -14,6 +14,8 @@ import {
   Upload,
   CheckCircle2,
   ArrowUpRight,
+  MessageCircleQuestion,
+  HelpCircle,
 } from "lucide-react";
 
 import Navbar, { DISPLAY_FONT } from "../components/Navbar";
@@ -907,24 +909,146 @@ useEffect(() => {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="border-t border-slate-200 bg-[#F8FAFC] py-20 sm:py-24">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-            <h2 className={`${DISPLAY_FONT} text-3xl font-extrabold tracking-tight sm:text-5xl`}>
-              Questions, answered
-            </h2>
-            <div className="divide-y divide-slate-200 border-y border-slate-200">
-              {FAQS.map((item) => (
-                <details key={item.q} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-6 text-left text-base font-bold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] sm:text-lg [&::-webkit-details-marker]:hidden">
-                    {item.q}
-                    <ChevronDown size={20} className="mt-1 shrink-0 text-slate-400 transition-transform group-open:rotate-180" />
-                  </summary>
-                  <p className="mt-3 max-w-[68ch] leading-7 text-slate-600">{item.a}</p>
-                </details>
-              ))}
-            </div>
+        
+<section
+  id="faqs"
+  className="relative isolate scroll-mt-20 overflow-hidden border-t border-slate-100 bg-white py-20 text-[#18124A] sm:py-24 lg:py-28"
+>
+  {/* Background decorations */}
+  <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute -left-40 top-20 h-[400px] w-[400px] rounded-full bg-[#5145E5]/[0.06] blur-[110px]" />
+    <div className="absolute -right-40 bottom-0 h-[400px] w-[400px] rounded-full bg-[#14E0C8]/[0.08] blur-[110px]" />
+  </div>
+
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+
+      {/* Left: FAQ introduction */}
+      <div className="lg:sticky lg:top-28">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/15 bg-[#5145E5]/[0.07] px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] text-[#5145E5]">
+          <span className="h-2 w-2 rounded-full bg-[#5145E5]" />
+          Help Center
+        </span>
+
+        <h2
+          className={`${DISPLAY_FONT} mt-6 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl`}
+        >
+          Questions?
+          <span className="mt-2 block text-[#5145E5]">
+            We've got
+          </span>
+          <span className="block">
+            answers.
+          </span>
+        </h2>
+
+        <p className="mt-6 max-w-md text-sm leading-7 text-slate-600 sm:text-base">
+          Everything you need to know about Quantahire,
+          intelligent job matching, automated applications,
+          and getting started with your next career move.
+        </p>
+
+        {/* Support card */}
+        <div className="mt-9 max-w-md overflow-hidden rounded-2xl border border-[#5145E5]/10 bg-gradient-to-br from-[#F3F1FF] via-white to-[#EFFFFC] p-5 sm:p-6">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-[#5145E5] shadow-sm">
+            <MessageCircleQuestion size={23} strokeWidth={1.8} />
           </div>
-        </section>
+
+          <h3 className="mt-5 text-lg font-extrabold">
+            Still have questions?
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Can't find the answer you're looking for?
+            We're happy to help you learn more about Quantahire.
+          </p>
+
+          <a
+            href="mailto:support@quantahire.tech"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#5145E5] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/15 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#4034C7] hover:shadow-indigo-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5] focus-visible:ring-offset-2"
+          >
+            Contact support
+            <ArrowUpRight size={17} />
+          </a>
+        </div>
+      </div>
+
+      {/* Right: FAQ accordion */}
+      <div className="min-w-0">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#5145E5]/10 text-[#5145E5]">
+              <HelpCircle size={19} />
+            </span>
+            <h3 className="text-sm font-extrabold sm:text-base">
+              Frequently asked questions
+            </h3>
+          </div>
+
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-500">
+            {FAQS.length} Questions
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {FAQS.map((item, index) => (
+            <details
+              key={item.q}
+              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_20px_rgba(20,20,60,0.025)] transition-all duration-300 open:border-[#5145E5]/25 open:bg-[#FAFAFF] open:shadow-[0_12px_35px_rgba(81,69,229,0.07)]"
+            >
+              {/* Active left accent */}
+              <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#5145E5] to-[#14E0C8] opacity-0 transition-opacity duration-300 group-open:opacity-100" />
+
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5145E5] sm:px-6 sm:py-6 [&::-webkit-details-marker]:hidden">
+                <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+                  <span className="mt-0.5 shrink-0 text-xs font-extrabold text-[#5145E5]/60 sm:text-sm">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <span className="text-sm font-bold leading-6 text-[#18124A] transition-colors duration-300 group-open:text-[#5145E5] sm:text-base">
+                    {item.q}
+                  </span>
+                </div>
+
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-500 transition-all duration-300 group-open:rotate-180 group-open:border-[#5145E5]/20 group-open:bg-[#5145E5] group-open:text-white">
+                  <ChevronDown size={18} strokeWidth={2.2} />
+                </span>
+              </summary>
+
+              <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 group-open:grid-rows-[1fr]">
+                <div className="min-h-0 overflow-hidden">
+                  <div className="mx-5 border-t border-slate-200/80 pb-6 pt-4 sm:mx-6">
+                    <p className="max-w-[65ch] text-sm leading-7 text-slate-600 sm:text-[15px]">
+                      {item.a}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+
+        {/* Bottom reassurance */}
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#14E0C8]/15 bg-[#14E0C8]/[0.06] p-4 sm:p-5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#087F78]">
+            <ShieldCheck size={19} />
+          </div>
+
+          <div>
+            <p className="text-sm font-bold text-[#18124A]">
+              Built with transparency in mind
+            </p>
+            <p className="mt-1 text-xs leading-6 text-slate-600 sm:text-sm">
+              Understand how Quantahire works and make informed
+              decisions about your job search.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
         {/* ---------------- FINAL CTA ---------------- */}
         <section className="px-5 py-20 sm:px-6 lg:px-8">
