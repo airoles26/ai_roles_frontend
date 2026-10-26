@@ -30,7 +30,6 @@ const QUICK_TAGS = [
   { label: "Auto-apply ready", params: { auto_apply: "true" } },
 ];
 
-const STACK = ["IBM Qiskit", "OpenAI GPT-4o", "Playwright", "Paystack", "Vercel"];
 
 const PILLARS = [
   {
@@ -604,21 +603,6 @@ useEffect(() => {
 
 </section>
 
-
-
-        {/* ---------------- STACK STRIP ---------------- */}
-        <section aria-label="Technology" className="border-y border-slate-200 bg-[#F8FAFC]">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-5 py-7 sm:px-6 md:flex-row md:justify-between lg:px-8">
-            <p className="text-sm font-semibold text-slate-500">Built on a modern, secure stack</p>
-            <ul className="flex flex-wrap justify-center gap-x-8 gap-y-3">
-              {STACK.map((name) => (
-                <li key={name} className={`${DISPLAY_FONT} text-base font-bold text-slate-400 sm:text-lg`}>
-                  {name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
 
         {/* ---------------- PILLARS ---------------- */}
         <section className="py-20 sm:py-24">
