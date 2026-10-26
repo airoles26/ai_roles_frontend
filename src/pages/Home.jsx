@@ -12,6 +12,8 @@ import {
   Search,
   ShieldCheck,
   Upload,
+  CheckCircle2,
+  ArrowUpRight,
 } from "lucide-react";
 
 import Navbar, { DISPLAY_FONT } from "../components/Navbar";
@@ -605,53 +607,225 @@ useEffect(() => {
 
 
         {/* ---------------- PILLARS ---------------- */}
-        <section className="py-20 sm:py-24">
-          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
-              Better matches, fewer forms, no dead listings
-            </h2>
+        
+<section className="relative isolate overflow-hidden bg-[#F8FAFF] py-20 text-[#18124A] sm:py-24 lg:py-28">
+  {/* Background decorations */}
+  <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute -left-40 top-10 h-[400px] w-[400px] rounded-full bg-[#5145E5]/[0.06] blur-[110px]" />
+    <div className="absolute -right-40 bottom-0 h-[400px] w-[400px] rounded-full bg-[#14E0C8]/[0.08] blur-[110px]" />
+    <div className="absolute inset-0 bg-[radial-gradient(#5145E5_0.6px,transparent_0.6px)] [background-size:24px_24px] opacity-[0.035]" />
+  </div>
 
-            <div className="mt-14 grid gap-x-16 gap-y-12 md:grid-cols-2">
-              {PILLARS.map(({ icon: Icon, title, badge, body }) => (
-                <article key={title} className="border-t-2 border-[#10162F] pt-6">
-                  <div className="flex items-center justify-between gap-4">
-                    <Icon size={26} className="text-[#5145E5]" />
-                    <span className="rounded-full bg-[#109589]/10 px-3 py-1 text-xs font-bold text-[#087F78]">
-                      {badge}
-                    </span>
-                  </div>
-                  <h3 className={`${DISPLAY_FONT} mt-5 text-2xl font-bold`}>{title}</h3>
-                  <p className="mt-3 max-w-[60ch] leading-7 text-slate-600">{body}</p>
-                </article>
-              ))}
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    {/* Section header */}
+    <div className="mx-auto max-w-3xl text-center">
+      <span className="inline-flex items-center gap-2 rounded-full border border-[#5145E5]/15 bg-[#5145E5]/[0.07] px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] text-[#5145E5]">
+        <span className="h-2 w-2 rounded-full bg-[#5145E5]" />
+        Why Quantahire
+      </span>
+
+      <h2
+        className={`${DISPLAY_FONT} mt-6 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl`}
+      >
+        Better matches.
+        <span className="block text-[#5145E5]">
+          Less busywork.
+        </span>
+        <span className="block">
+          Real opportunities.
+        </span>
+      </h2>
+
+      <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+        Your job search deserves more than endless scrolling and
+        repetitive applications. Discover how Quantahire combines
+        intelligent technology with a simpler, more effective
+        hiring experience.
+      </p>
+    </div>
+
+    {/* Feature cards */}
+    <div className="mt-14 grid grid-cols-1 gap-5 sm:mt-16 sm:grid-cols-2 lg:gap-7">
+      {PILLARS.map(({ icon: Icon, title, badge, body }, i) => (
+        <article
+          key={title}
+          className="group relative flex min-w-0 flex-col overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-6 shadow-[0_8px_35px_rgba(20,20,60,0.035)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#5145E5]/30 hover:shadow-[0_20px_50px_rgba(81,69,229,0.10)] sm:p-8 lg:p-9"
+        >
+          {/* Gradient hover overlay */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5145E5]/[0.035] via-transparent to-[#14E0C8]/[0.055] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+          {/* Decorative background number */}
+          <span
+            aria-hidden="true"
+            className={`${DISPLAY_FONT} pointer-events-none absolute -right-2 -top-5 select-none text-[110px] font-black leading-none text-[#5145E5]/[0.035] sm:text-[140px]`}
+          >
+            {String(i + 1).padStart(2, "0")}
+          </span>
+
+          {/* Icon and badge */}
+          <div className="relative flex flex-wrap items-start justify-between gap-4">
+            <div className="relative">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#5145E5]/10 bg-gradient-to-br from-[#5145E5]/10 to-[#14E0C8]/10 text-[#5145E5] transition-all duration-300 group-hover:scale-105 group-hover:border-[#5145E5]/25 group-hover:from-[#5145E5] group-hover:to-[#7569EE] group-hover:text-white">
+                <Icon size={29} strokeWidth={1.8} />
+              </div>
+
+              <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-[3px] border-white bg-[#14E0C8]" />
+            </div>
+
+            <span className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#14E0C8]/20 bg-[#14E0C8]/10 px-3 py-1.5 text-[10px] font-extrabold tracking-wide text-[#087F78] sm:text-xs">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0AAE9D]" />
+              {badge}
+            </span>
+          </div>
+
+          {/* Card content */}
+          <div className="relative mt-8 flex-1">
+            <h3
+              className={`${DISPLAY_FONT} text-xl font-extrabold leading-snug tracking-tight text-[#18124A] transition-colors duration-300 group-hover:text-[#5145E5] sm:text-2xl`}
+            >
+              {title}
+            </h3>
+
+            <p className="mt-4 max-w-[58ch] text-sm leading-7 text-slate-600 sm:text-[15px]">
+              {body}
+            </p>
+          </div>
+
+          {/* Card footer */}
+          <div className="relative mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
+            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">
+              Quantahire advantage
+            </span>
+
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[#5145E5] transition-all duration-300 group-hover:translate-x-1 group-hover:border-[#5145E5] group-hover:bg-[#5145E5] group-hover:text-white">
+              <ArrowUpRight size={17} />
             </div>
           </div>
-        </section>
+        </article>
+      ))}
+    </div>
+
+    {/* Bottom reassurance */}
+    <div className="mt-12 flex flex-col items-center justify-center gap-3 text-center sm:mt-16 sm:flex-row">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#14E0C8]/10 text-[#087F78]">
+        <CheckCircle2 size={20} />
+      </div>
+
+      <p className="max-w-xl text-sm leading-6 text-slate-600">
+        Built to help you spend less time searching and more time
+        preparing for the opportunities that matter.
+      </p>
+    </div>
+  </div>
+</section>
+
 
         {/* ---------------- HOW IT WORKS ---------------- */}
-        <section id="how-it-works" className="scroll-mt-20 bg-[#10162F] py-20 text-white sm:py-24">
-          <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-            <h2 className={`${DISPLAY_FONT} max-w-2xl text-3xl font-extrabold tracking-tight sm:text-5xl`}>
-              How Quantahire works
-            </h2>
-            <p className="mt-4 max-w-xl leading-7 text-slate-300">
-              From CV to offer in four steps. You stay in control of which roles the Copilot applies to.
-            </p>
+        
+<section
+  id="how-it-works"
+  className="relative isolate scroll-mt-20 overflow-hidden bg-[#080D23] py-20 text-white sm:py-24 lg:py-28"
+>
+  {/* Background effects */}
+  <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div className="absolute -left-40 top-0 h-[400px] w-[400px] rounded-full bg-[#5145E5]/20 blur-[120px]" />
+    <div className="absolute -right-40 bottom-0 h-[400px] w-[400px] rounded-full bg-[#14E0C8]/10 blur-[120px]" />
+    <div className="absolute inset-0 bg-gradient-to-b from-[#10162F]/60 via-transparent to-[#080D23]" />
+  </div>
 
-            <ol className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-              {STEPS.map(({ icon: Icon, title, body }, i) => (
-                <li key={title} className="relative">
-                  <div className="flex items-center gap-3">
-                    <span className={`${DISPLAY_FONT} text-5xl font-extrabold text-[#14E0C8]`}>{i + 1}</span>
-                    <Icon size={22} className="text-slate-400" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-bold">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    {/* Section heading */}
+    <div className="mx-auto max-w-3xl text-center">
+      <span className="inline-flex items-center gap-2 rounded-full border border-[#14E0C8]/25 bg-[#14E0C8]/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#14E0C8]">
+        <span className="h-2 w-2 rounded-full bg-[#14E0C8]" />
+        Simple. Smart. Powerful.
+      </span>
+
+      <h2
+        className={`${DISPLAY_FONT} mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl`}
+      >
+        Your next opportunity,
+        <span className="mt-2 block bg-gradient-to-r from-[#14E0C8] via-[#7FFFEF] to-[#A89FFF] bg-clip-text text-transparent">
+          just four steps away.
+        </span>
+      </h2>
+
+      <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+        From CV to offer, Quantahire simplifies your job search with
+        intelligent matching and automated applications. You're always
+        in control.
+      </p>
+    </div>
+
+    {/* Steps */}
+    <div className="relative mt-14 sm:mt-16 lg:mt-20">
+
+      {/* Connecting line on desktop */}
+      <div className="pointer-events-none absolute left-[12.5%] right-[12.5%] top-12 hidden h-px bg-gradient-to-r from-transparent via-[#14E0C8]/40 to-transparent lg:block" />
+
+      <ol className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+        {STEPS.map(({ icon: Icon, title, body }, i) => (
+          <li key={title} className="group relative min-w-0">
+
+            <div className="relative flex h-full flex-col overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.045] p-6 shadow-xl shadow-black/10 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-[#14E0C8]/40 hover:bg-white/[0.075] hover:shadow-[#14E0C8]/10 sm:p-7">
+
+              {/* Hover gradient */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5145E5]/15 via-transparent to-[#14E0C8]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              {/* Top */}
+              <div className="relative flex items-start justify-between gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-[#14E0C8]/20 bg-gradient-to-br from-[#5145E5]/30 to-[#14E0C8]/10 text-[#14E0C8] transition-all duration-300 group-hover:scale-110 group-hover:border-[#14E0C8]/50">
+                  <Icon size={29} strokeWidth={1.8} />
+                </div>
+
+                <span
+                  className={`${DISPLAY_FONT} text-5xl font-black tracking-tight text-white/10 transition-colors duration-300 group-hover:text-[#14E0C8]/25`}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+
+              {/* Content */}
+              <div className="relative mt-8 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#14E0C8]">
+                  Step {i + 1}
+                </span>
+
+                <h3 className="mt-3 text-lg font-extrabold leading-snug tracking-tight text-white sm:text-xl">
+                  {title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-slate-300">
+                  {body}
+                </p>
+              </div>
+
+              {/* Bottom decoration */}
+              <div className="relative mt-8 h-1 w-12 rounded-full bg-gradient-to-r from-[#5145E5] to-[#14E0C8] transition-all duration-300 group-hover:w-full" />
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    {/* Bottom message */}
+    <div className="mt-12 flex flex-col items-center justify-center gap-3 text-center sm:mt-16 sm:flex-row">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#14E0C8]/30 bg-[#14E0C8]/10 text-[#14E0C8]">
+        <CheckCircle2 size={17} />
+      </span>
+
+      <p className="text-sm font-medium text-slate-300">
+        Your career journey, powered by intelligence.
+        <span className="ml-1 font-bold text-white">
+          You stay in control.
+        </span>
+      </p>
+    </div>
+  </div>
+</section>
+
 
         {/* ---------------- PRICING ---------------- */}
         <section id="pricing" className="scroll-mt-20 py-20 sm:py-24">
