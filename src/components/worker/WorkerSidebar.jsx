@@ -5,6 +5,8 @@ import {
   Atom, UserRound, Settings, LogOut, Sparkles, ArrowUpRight,
 } from "lucide-react";
 
+import logo from "../../assets/logo.png";
+
 const sections = [
   { label: "WORKSPACE", links: [
     { label: "Overview", to: "/worker/dashboard", icon: LayoutDashboard, end: true },
@@ -47,10 +49,17 @@ export default function WorkerSidebar({ open, onClose, user }) {
       {open && <button type="button" aria-label="Close navigation" onClick={onClose} className="fixed inset-0 z-40 bg-[#10162F]/60 backdrop-blur-[2px] lg:hidden" />}
       <aside aria-label="Worker navigation" className={`fixed inset-y-0 left-0 z-50 flex w-[272px] flex-col border-r border-[#E9EAF3] bg-white shadow-xl transition-transform duration-300 ease-out lg:translate-x-0 lg:shadow-none ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex h-[76px] items-center justify-between border-b border-slate-100 px-6">
-          <NavLink to="/worker/dashboard" onClick={onClose} className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5145E5] text-white shadow-md shadow-indigo-500/20"><Atom size={23} /></span>
-            <span><span className="block text-xl font-extrabold tracking-tight text-[#18124A]">Quanta<span className="text-[#5145E5]">hire</span></span><span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Talent Workspace</span></span>
-          </NavLink>
+          <NavLink
+  to="/worker/dashboard"
+  onClick={onClose}
+  className="flex items-center"
+>
+  <img
+    src={logo}
+    alt="Quantahire Logo"
+    className="h-12 w-auto max-w-[190px] object-contain sm:h-14"
+  />
+</NavLink>
           <button type="button" onClick={onClose} aria-label="Close sidebar" className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"><X size={20} /></button>
         </div>
 
