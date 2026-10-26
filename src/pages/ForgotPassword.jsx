@@ -68,15 +68,12 @@ export default function ForgotPassword() {
         <div className="absolute -right-32 top-10 h-96 w-96 rounded-full bg-[#5145E5]/40 blur-3xl" />
         <div className="absolute -left-24 bottom-0 h-80 w-80 rounded-full bg-[#14E0C8]/10 blur-3xl" />
 
-        <Link to="/" className="relative z-10 flex items-center gap-3">
+        <Link to="/" className="relative z-10 w-fit flex items-center gap-3 mb-10 rounded-xl bg-white p-2">
           <img
             src={logo}
             alt="Quantahire"
             className="h-12 w-auto object-contain"
           />
-          <span className="text-xl font-bold tracking-tight">
-            Quantahire
-          </span>
         </Link>
 
         <div className="relative z-10 max-w-lg">

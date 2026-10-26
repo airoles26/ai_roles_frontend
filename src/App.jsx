@@ -16,6 +16,7 @@ import JobDetails from "./pages/JobDetails";
 import About from "./pages/About";
 import Enterprise from "./pages/Enterprise";
 import Copilot from "./pages/Copilot";
+import LinkedInCallback from "./pages/LinkedInCallback";
 
 
 // auth
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/copilot" element={<Copilot />} />
+        <Route path="/auth/linkedin/callback" element={<LinkedInCallback />}/>
 
         </Route>
 
