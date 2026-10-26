@@ -399,7 +399,7 @@ useEffect(() => {
             className="shrink-0 text-[#14E0C8]"
           />
           <span>
-            Quantahire 2.0, built with IBM Qiskit
+            Quantahire 1.0, built with IBM Qiskit
           </span>
         </p>
       </div>
@@ -410,7 +410,7 @@ useEffect(() => {
       >
         Quantahire{" "}
         <span className="bg-gradient-to-r from-[#14E0C8] to-[#A5A0FF] bg-clip-text text-transparent">
-          is the word's first quantum powered job board
+          is the world's first quantum powered job board
         </span>
       </h1>
 

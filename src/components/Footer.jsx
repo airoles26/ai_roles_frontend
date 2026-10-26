@@ -38,16 +38,16 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-6 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
         <div className="max-w-xs">
            <Link
-            to="/"
-            aria-label="Quantahire home"
-            className="inline-flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
-          >
-            <img
-              src={quantahireLogo}
-              alt="Quantahire"
-              className="h-10 w-auto object-contain sm:h-12"
-            />
-          </Link>
+  to="/"
+  aria-label="Quantahire home"
+  className="inline-flex items-center justify-center rounded-xl bg-white p-2 shadow-sm transition-all duration-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5145E5]"
+>
+  <img
+    src={quantahireLogo}
+    alt="Quantahire"
+    className="h-10 w-auto object-contain sm:h-12"
+  />
+</Link>
           <p className="mt-4 text-sm leading-6 text-slate-400">
             The quantum-powered job board. Match scoring, quantum-optimised
             shortlists and an AI Copilot that applies for you.
