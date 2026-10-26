@@ -55,8 +55,13 @@ const managementLinks = [
     icon: Building2,
   },
   {
+    label: "Plans",
+    path: "/plans",
+    icon: CreditCard,
+  },
+  {
     label: "Subscription",
-    path: "/company/subscription",
+    path: "/subscription",
     icon: CreditCard,
   },
   {

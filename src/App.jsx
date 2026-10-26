@@ -17,6 +17,9 @@ import About from "./pages/About";
 import Enterprise from "./pages/Enterprise";
 import Copilot from "./pages/Copilot";
 import LinkedInCallback from "./pages/LinkedInCallback";
+import Plans from "./pages/Plans";
+import MySubscription from "./pages/MySubscription";
+import PaymentCallback from "./pages/PaymentCallback";
 
 
 // auth
@@ -33,6 +36,8 @@ import WorkerDashboard from "./pages/worker/WorkerDashboard";
 import MyApplications from "./pages/worker/MyApplications";
 import QuantumMatches from "./pages/worker/QuantumMatches";
 import WorkerProfile from "./pages/worker/WorkerProfile";
+
+
 
 
 export default function App() {
@@ -61,6 +66,9 @@ export default function App() {
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/copilot" element={<Copilot />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInCallback />}/>
+        <Route path="/plans" element={<Plans />} />
+        <Route path="subscription" element={<MySubscription />} />
+        <Route path="payment/callback" element={<PaymentCallback />} />
 
         </Route>
 
@@ -83,6 +91,7 @@ export default function App() {
             <Route path="applications" element={<MyApplications />} />
             <Route path="quantum-matches" element={<QuantumMatches />} />
             <Route path="profile" element={<WorkerProfile />} />
+            
         </Route>
 
 
