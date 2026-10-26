@@ -51,6 +51,25 @@ export default function Signin() {
     setError("");
   };
 
+
+
+const [linkedinLoading, setLinkedinLoading] = useState(false);
+
+const handleLinkedInSignin = () => {
+  setError("");
+  setLinkedinLoading(true);
+
+  sessionStorage.setItem(
+    "linkedin_remember_me",
+    String(rememberMe)
+  );
+
+  window.location.assign(
+    `${API_BASE_URL}/auth/linkedin/start/`
+  );
+};
+
+
  
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -480,6 +499,56 @@ const handleSubmit = async (event) => {
               )}
             </button>
           </form>
+
+
+{/* Social authentication */}
+<div className="mt-8">
+  <div className="flex items-center gap-4">
+    <div className="h-px flex-1 bg-slate-200" />
+
+    <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-slate-400">
+      Or continue with
+    </span>
+
+    <div className="h-px flex-1 bg-slate-200" />
+  </div>
+
+  <button
+    type="button"
+    onClick={handleLinkedInSignin}
+    disabled={loading || linkedinLoading}
+    className="group mt-6 flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl border border-[#0A66C2]/20 bg-white px-5 py-3.5 text-sm font-bold text-[#18124A] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0A66C2] hover:bg-[#F0F7FF] hover:shadow-lg hover:shadow-blue-500/10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0A66C2]/15 disabled:cursor-not-allowed disabled:opacity-60"
+  >
+    {linkedinLoading ? (
+      <>
+        <LoaderCircle
+          size={20}
+          className="animate-spin text-[#0A66C2]"
+        />
+        Connecting to LinkedIn...
+      </>
+    ) : (
+      <>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#0A66C2] text-sm font-black text-white">
+          in
+        </span>
+
+        <span>Continue with LinkedIn</span>
+
+        <ArrowRight
+          size={17}
+          className="ml-auto shrink-0 text-[#0A66C2] transition-transform group-hover:translate-x-1"
+        />
+      </>
+    )}
+  </button>
+
+  <p className="mt-4 text-center text-xs leading-6 text-slate-400">
+    Sign in securely using your LinkedIn account.
+    No additional password required.
+  </p>
+</div>
+
 
           {/* Divider */}
           <div className="my-8 flex items-center gap-4">
