@@ -1072,7 +1072,7 @@ useEffect(() => {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }
