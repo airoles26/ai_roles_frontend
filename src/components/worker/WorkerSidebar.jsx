@@ -8,18 +8,24 @@ import {
 import logo from "../../assets/logo.png";
 
 const sections = [
-  { label: "WORKSPACE", links: [
-    { label: "Overview", to: "/worker/dashboard", icon: LayoutDashboard, end: true },
-    { label: "Find Jobs", to: "/jobs", icon: Search },
-    { label: "My Applications", to: "/worker/applications", icon: BriefcaseBusiness },
-    { label: "Saved Jobs", to: "/worker/saved-jobs", icon: Bookmark },
-    { label: "Quantum Matches", to: "/worker/quantum-matches", icon: Atom },
-    { label: "My Subscriptions", to: "/worker/subscription", icon: Atom },
-  ] },
-  { label: "ACCOUNT", links: [
-    { label: "My Profile", to: "/worker/profile", icon: UserRound },
-    { label: "Settings", to: "/worker/settings", icon: Settings },
-  ] },
+  {
+    label: "WORKSPACE",
+    links: [
+      { label: "Overview", to: "/worker/dashboard", icon: LayoutDashboard, end: true },
+      { label: "Find Jobs", to: "/jobs", icon: Search },
+      { label: "My Applications", to: "/worker/applications", icon: BriefcaseBusiness },
+      { label: "Saved Jobs", to: "/worker/saved-jobs", icon: Bookmark },
+      { label: "Quantum Matches", to: "/worker/quantum-matches", icon: Atom },
+      { label: "My Subscriptions", to: "/subscription", icon: Atom },
+    ],
+  },
+  {
+    label: "ACCOUNT",
+    links: [
+      { label: "My Profile", to: "/worker/profile", icon: UserRound },
+      { label: "Settings", to: "/worker/settings", icon: Settings },
+    ],
+  },
 ];
 
 export default function WorkerSidebar({ open, onClose, user }) {

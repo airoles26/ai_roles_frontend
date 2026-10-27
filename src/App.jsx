@@ -67,8 +67,8 @@ export default function App() {
         <Route path="/copilot" element={<Copilot />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInCallback />}/>
         <Route path="/plans" element={<Plans />} />
-        <Route path="subscription" element={<MySubscription />} />
-        <Route path="payment/callback" element={<PaymentCallback />} />
+        <Route path="/subscription" element={<MySubscription />} />
+        <Route path="/payment/callback" element={<PaymentCallback />} />
 
         </Route>
 
