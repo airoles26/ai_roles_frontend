@@ -36,6 +36,8 @@ import WorkerDashboard from "./pages/worker/WorkerDashboard";
 import MyApplications from "./pages/worker/MyApplications";
 import QuantumMatches from "./pages/worker/QuantumMatches";
 import WorkerProfile from "./pages/worker/WorkerProfile";
+import FindJobs from "./pages/worker/FindJobs";
+import FindJobDetails from "./pages/worker/FindJobDetails";
 
 
 
@@ -89,6 +91,8 @@ export default function App() {
         <Route path="/worker" element={<WorkerLayout />}>
             <Route path="dashboard" element={<WorkerDashboard />} />
             <Route path="applications" element={<MyApplications />} />
+            <Route path="find-jobs" element={<FindJobs />} />
+            <Route path="find-jobs/:slug" element={<FindJobDetails />}/>
             <Route path="quantum-matches" element={<QuantumMatches />} />
             <Route path="profile" element={<WorkerProfile />} />
             
