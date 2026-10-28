@@ -45,6 +45,7 @@ export default function WorkerProfile() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const loadProfile = useCallback(async () => {
     try {
@@ -68,6 +69,53 @@ export default function WorkerProfile() {
     setForm((previous) => ({ ...previous, [name]: type === "checkbox" ? checked : value }));
     setSuccess("");
   };
+
+  
+
+const handleImageUpload = async (event) => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    setError("Only JPG, PNG and WebP images are allowed.");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    setError("Image must not exceed 5 MB.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    setUploadingImage(true);
+    setError("");
+    setSuccess("");
+
+    const { data } = await api.post(
+      "/worker/profile/upload-image/",
+      formData
+    );
+
+    setForm((previous) => ({
+      ...previous,
+      profile_image: data.profile_image,
+    }));
+
+    setSuccess("Profile image updated successfully.");
+  } catch (error) {
+    setError(
+      error.response?.data?.detail ||
+      "Failed to upload image."
+    );
+  } finally {
+    setUploadingImage(false);
+    event.target.value = "";
+  }
+};
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -120,15 +168,116 @@ export default function WorkerProfile() {
         </div>
 
         <form onSubmit={onSubmit} className="space-y-6">
-          <Section icon={UserRound} title="Personal information" subtitle="Basic information associated with your candidate account.">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="First name" name="first_name" value={form.first_name} onChange={onChange} required maxLength={150} />
-              <Field label="Last name" name="last_name" value={form.last_name} onChange={onChange} required maxLength={150} />
-              <Field label="Email address" name="email" type="email" value={form.email} onChange={onChange} required />
-              <Field label="Phone number" name="phone" value={form.phone} onChange={onChange} placeholder="+254 7..." />
-              <div className="sm:col-span-2"><Field label="Location" name="location" value={form.location} onChange={onChange} placeholder="Nairobi, Kenya" /></div>
-            </div>
-          </Section>
+          <Section
+  icon={UserRound}
+  title="Personal information"
+  subtitle="Manage your personal details and profile photo."
+>
+  {/* Profile image upload */}
+  <div className="mb-6 flex flex-col gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:flex-row sm:items-center">
+    <div className="relative h-24 w-24 shrink-0">
+      <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-indigo-100 shadow-sm">
+        {form.profile_image ? (
+          <img
+            src={form.profile_image}
+            alt="Profile"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <span className="text-2xl font-bold text-[#5145E5]">
+            {initials}
+          </span>
+        )}
+      </div>
+
+      <label
+        htmlFor="personal-profile-image"
+        className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-[#5145E5] text-white shadow-md hover:bg-[#4338CA]"
+      >
+        {uploadingImage ? (
+          <Loader2 size={16} className="animate-spin" />
+        ) : (
+          <Camera size={16} />
+        )}
+      </label>
+    </div>
+
+    <div className="flex-1">
+      <h3 className="font-bold text-[#10162F]">
+        Profile photo
+      </h3>
+      <p className="mt-1 text-sm text-slate-500">
+        Upload a professional photo to personalize your
+        Quantahire profile. JPG, PNG or WebP, max 5 MB.
+      </p>
+
+      <label
+        htmlFor="personal-profile-image"
+        className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-[#5145E5] hover:bg-indigo-50"
+      >
+        <Camera size={16} />
+        {uploadingImage ? "Uploading..." : "Change photo"}
+      </label>
+
+      <input
+        id="personal-profile-image"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handleImageUpload}
+        disabled={uploadingImage}
+        className="hidden"
+      />
+    </div>
+  </div>
+
+  {/* Existing personal information fields */}
+  <div className="grid gap-5 sm:grid-cols-2">
+    <Field
+      label="First name"
+      name="first_name"
+      value={form.first_name}
+      onChange={onChange}
+      required
+      maxLength={150}
+    />
+
+    <Field
+      label="Last name"
+      name="last_name"
+      value={form.last_name}
+      onChange={onChange}
+      required
+      maxLength={150}
+    />
+
+    <Field
+      label="Email address"
+      name="email"
+      type="email"
+      value={form.email}
+      onChange={onChange}
+      required
+    />
+
+    <Field
+      label="Phone number"
+      name="phone"
+      value={form.phone}
+      onChange={onChange}
+      placeholder="+254 7..."
+    />
+
+    <div className="sm:col-span-2">
+      <Field
+        label="Location"
+        name="location"
+        value={form.location}
+        onChange={onChange}
+        placeholder="Nairobi, Kenya"
+      />
+    </div>
+  </div>
+</Section>
 
           <Section icon={BriefcaseBusiness} title="Professional background" subtitle="Help Quantahire understand your experience and expertise.">
             <div className="grid gap-5 sm:grid-cols-2">
