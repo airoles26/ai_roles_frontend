@@ -20,6 +20,8 @@ import CopilotBanner from "../components/CopilotBanner";
 import api from "../api/api";
 import { startCheckout } from "../components/checkout/Checkout";
 
+import SEO from "../components/SEO";
+
 /* ------------------------------------------------------------------ */
 /* Config: values must match your Django filters                        */
 /* ------------------------------------------------------------------ */
@@ -241,6 +243,15 @@ export default function Jobs() {
   };
 
   return (
+    <>
+
+    <SEO
+        title="Find Tech Jobs Worldwide | Quantahire"
+        description="Explore software engineering, AI, data science, remote and technology jobs on Quantahire."
+        path="/jobs"
+      />
+
+
     <div className="min-h-screen bg-[#F8FAFC] text-[#10162F]">
 
       <main>
@@ -514,6 +525,7 @@ export default function Jobs() {
       )}
 
     </div>
+    </>
   );
 }
 
