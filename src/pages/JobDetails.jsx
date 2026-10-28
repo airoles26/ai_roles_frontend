@@ -1,925 +1,155 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import {
-  ArrowLeft,
-  ArrowUpRight,
-  Banknote,
-  BriefcaseBusiness,
-  Building2,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  ExternalLink,
-  Globe2,
-  MapPin,
-  Share2,
-  Sparkles,
-  Tag,
-  Wifi,
-  AlertCircle,
-  RefreshCw,
+  ArrowLeft, ArrowRight, ArrowUpRight, BriefcaseBusiness, Building2,
+  CalendarDays, CheckCircle2, Clock3, ExternalLink, Globe2, MapPin,
+  Share2, Sparkles, Tag, Wifi, AlertCircle, RefreshCw, Wallet,
+  ShieldCheck, ChevronRight,
 } from "lucide-react";
-
-
 import api from "../api/api";
 
-const BRAND = {
-  navy: "#071A3D",
-  teal: "#1699A4",
-  tealDark: "#147C91",
-  gold: "#E6A064",
-  background: "#F7FAFC",
-};
+const BRAND = { primary: "#5145E5", dark: "#18124A", teal: "#14E0C8" };
 
-/*
-|--------------------------------------------------------------------------
-| HELPERS
-|--------------------------------------------------------------------------
-*/
-
-function formatDate(date) {
-  if (!date) return "Not specified";
-
-  const parsed = new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return "Not specified";
-  }
-
-  return parsed.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+function formatDate(value) {
+  if (!value) return "Not specified";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not specified" : date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
-
-function formatRelativeDate(date) {
-  if (!date) return "Recently";
-
-  const parsed = new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return "Recently";
-  }
-
-  const difference = Date.now() - parsed.getTime();
-  const days = Math.floor(difference / 86400000);
-
-  if (days <= 0) return "Today";
-  if (days === 1) return "1 day ago";
-
-  if (days < 30) {
-    return `${days} days ago`;
-  }
-
-  const months = Math.floor(days / 30);
-
-  if (months === 1) return "1 month ago";
-
-  if (months < 12) {
-    return `${months} months ago`;
-  }
-
-  return formatDate(date);
+function relativeDate(value) {
+  if (!value) return "Recently";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+  const days = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86400000));
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days < 30) return `${days} days ago`;
+  if (days < 365) return `${Math.floor(days / 30)} months ago`;
+  return formatDate(value);
 }
-
 function formatSalary(job) {
-  const hasMin =
-    job?.salary_min !== null &&
-    job?.salary_min !== undefined &&
-    job?.salary_min !== "";
-
-  const hasMax =
-    job?.salary_max !== null &&
-    job?.salary_max !== undefined &&
-    job?.salary_max !== "";
-
-  if (!hasMin && !hasMax) {
-    return null;
-  }
-
-  const currency = job.currency || "USD";
-
-  const formatNumber = (value) =>
-    Number(value).toLocaleString("en-US");
-
-  if (hasMin && hasMax) {
-    return `${currency} ${formatNumber(
-      job.salary_min
-    )} - ${formatNumber(job.salary_max)}`;
-  }
-
-  if (hasMin) {
-    return `${currency} ${formatNumber(job.salary_min)}+`;
-  }
-
-  return `Up to ${currency} ${formatNumber(
-    job.salary_max
-  )}`;
+  const min = job?.salary_min;
+  const max = job?.salary_max;
+  if ((min == null || min === "") && (max == null || max === "")) return "Not disclosed";
+  const currency = job?.currency || "";
+  const fmt = (n) => Number(n).toLocaleString("en-US");
+  if (min != null && min !== "" && max != null && max !== "") return `${currency} ${fmt(min)} – ${fmt(max)}`.trim();
+  if (min != null && min !== "") return `${currency} ${fmt(min)}+`.trim();
+  return `Up to ${currency} ${fmt(max)}`.trim();
 }
-
-function formatEmploymentType(value) {
-  if (!value) {
-    return "Not specified";
-  }
-
-  const labels = {
-    full_time: "Full-time",
-    part_time: "Part-time",
-    contract: "Contract",
-    internship: "Internship",
-    temporary: "Temporary",
-    freelance: "Freelance",
-    apprenticeship: "Apprenticeship",
-    volunteer: "Volunteer",
-  };
-
+function employmentLabel(value) {
+  const names = { full_time: "Full-time", part_time: "Part-time", contract: "Contract", internship: "Internship", temporary: "Temporary", freelance: "Freelance" };
+  return names[value] || (value ? value.replaceAll("_", " ").replace(/\b\w/g, (s) => s.toUpperCase()) : "Not specified");
+}
+function InfoTile({ icon: Icon, label, value }) {
   return (
-    labels[value] ||
-    value
-      .replaceAll("_", " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    <div className="rounded-2xl border border-[#E8E7F6] bg-white p-4 sm:p-5 shadow-sm shadow-indigo-950/[0.025]">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#5145E5]/[0.08] text-[#5145E5]"><Icon size={19} /></div>
+      <p className="text-xs font-medium text-slate-500">{label}</p>
+      <p className="mt-1 break-words text-sm font-bold text-[#18124A]">{value}</p>
+    </div>
   );
 }
-
-function getCompanyName(job) {
-  return job?.company?.name || "Company not specified";
+function SidebarLine({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-start gap-3 py-3">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F3F1FF] text-[#5145E5]"><Icon size={17} /></span>
+      <div className="min-w-0"><p className="text-xs text-slate-500">{label}</p><p className="mt-0.5 break-words text-sm font-semibold text-[#18124A]">{value}</p></div>
+    </div>
+  );
 }
-
-/*
-|--------------------------------------------------------------------------
-| PAGE
-|--------------------------------------------------------------------------
-*/
+function Description({ value }) {
+  if (!value) return <p className="text-slate-500">No detailed description is available for this job yet.</p>;
+  return <div className="space-y-4 whitespace-pre-line break-words text-[15px] leading-8 text-slate-600">{String(value).split(/\n\s*\n/).filter(Boolean).map((part, index) => <p key={index}>{part.trim()}</p>)}</div>;
+}
+function LoadingState() {
+  return <div className="min-h-screen bg-[#F8F9FE]"><div className="mx-auto max-w-7xl animate-pulse px-4 py-10 sm:px-6 lg:px-8"><div className="mb-7 h-4 w-32 rounded bg-indigo-100"/><div className="h-64 rounded-[28px] bg-indigo-100"/><div className="mt-8 grid gap-7 lg:grid-cols-[minmax(0,1fr)_330px]"><div className="space-y-5"><div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[1,2,3,4].map(i=><div key={i} className="h-32 rounded-2xl bg-indigo-50"/>)}</div><div className="h-96 rounded-3xl bg-indigo-50"/></div><div className="h-80 rounded-3xl bg-indigo-50"/></div></div></div>;
+}
 
 export default function JobDetails() {
   const { slug } = useParams();
-
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-
-  /*
-  |--------------------------------------------------------------------------
-  | LOAD JOB
-  |--------------------------------------------------------------------------
-  */
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-
-    const loadJob = async () => {
-      if (!slug) {
-        setError("The job link is invalid or incomplete.");
-        setLoading(false);
-        return;
-      }
-
+    async function load() {
+      setLoading(true); setError(""); setJob(null);
+      if (!slug) { setError("The job link is invalid or incomplete."); setLoading(false); return; }
       try {
-        setLoading(true);
-        setError("");
-        setJob(null);
-
         const response = await api.get(`/jobs/${slug}/`);
-
-        if (!cancelled) {
-          setJob(response.data);
-        }
+        if (!cancelled) setJob(response.data?.job || response.data);
       } catch (err) {
-        console.error("Failed loading job:", err);
-
-        if (!cancelled) {
-          if (err.response?.status === 404) {
-            setError(
-              "This job could not be found or may no longer be active."
-            );
-          } else {
-            setError(
-              "We couldn't load this job. Please check your connection and try again."
-            );
-          }
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadJob();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | SHARE
-  |--------------------------------------------------------------------------
-  */
-
-  const handleShare = async () => {
-    const shareData = {
-      title: job?.title
-        ? `${job.title} at ${getCompanyName(job)} | Quantahire`
-        : "Job opportunity | Quantahire",
-
-      text: job?.title
-        ? `Discover this ${job.title} opportunity at ${getCompanyName(
-            job
-          )} on Quantahire.`
-        : "Discover job opportunities on Quantahire.",
-
-      url: window.location.href,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        return;
-      }
-
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(
-          window.location.href
-        );
-
-        setCopied(true);
-
-        window.setTimeout(() => {
-          setCopied(false);
-        }, 2000);
-
-        return;
-      }
-
-      // Fallback for browsers without the Clipboard API.
-      window.prompt(
-        "Copy this link to share the job:",
-        window.location.href
-      );
-    } catch (err) {
-      if (err.name !== "AbortError") {
-        console.error("Could not share job:", err);
-      }
+        if (!cancelled) setError(err.response?.status === 404 ? "This job could not be found or is no longer available." : "We couldn't load this opportunity. Please try again.");
+      } finally { if (!cancelled) setLoading(false); }
     }
-  };
+    load();
+    return () => { cancelled = true; };
+  }, [slug, retry]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | LOADING
-  |--------------------------------------------------------------------------
-  */
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#F7FAFC]">
-
-        <main>
-          <div className="mx-auto max-w-7xl px-5 py-10 sm:px-6 lg:px-8">
-            <div className="mb-6 h-5 w-36 animate-pulse rounded bg-slate-200" />
-
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_350px]">
-              <div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
-                  <div className="flex gap-5">
-                    <div className="h-16 w-16 animate-pulse rounded-2xl bg-slate-100" />
-
-                    <div className="flex-1">
-                      <div className="h-4 w-32 animate-pulse rounded bg-slate-100" />
-                      <div className="mt-4 h-8 w-3/4 animate-pulse rounded bg-slate-100" />
-                      <div className="mt-4 h-4 w-1/2 animate-pulse rounded bg-slate-100" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-8">
-                  <div className="h-6 w-48 animate-pulse rounded bg-slate-100" />
-
-                  <div className="mt-6 space-y-3">
-                    {[1, 2, 3, 4, 5, 6].map((item) => (
-                      <div
-                        key={item}
-                        className="h-4 animate-pulse rounded bg-slate-100"
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="h-80 animate-pulse rounded-3xl bg-slate-100" />
-            </div>
-          </div>
-        </main>
-
-      </div>
-    );
+  async function shareJob() {
+    const url = window.location.href;
+    try {
+      if (navigator.share) { await navigator.share({ title: `${job.title} | Quantahire`, url }); return; }
+      if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url); setCopied(true); window.setTimeout(() => setCopied(false), 2000); return; }
+      window.prompt("Copy this job link:", url);
+    } catch (err) { if (err.name !== "AbortError") console.error("Unable to share job", err); }
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | ERROR
-  |--------------------------------------------------------------------------
-  */
-
-  if (error || !job) {
-    return (
-      <div className="min-h-screen bg-[#F7FAFC]">
-
-        <main className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-lg rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-              <AlertCircle size={27} />
-            </div>
-
-            <h1
-              className="mt-5 text-2xl font-black"
-              style={{ color: BRAND.navy }}
-            >
-              Job unavailable
-            </h1>
-
-            <p className="mt-3 text-sm leading-6 text-slate-500">
-              {error || "This job could not be found."}
-            </p>
-
-            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link
-                to="/jobs"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-extrabold text-white transition hover:opacity-90"
-                style={{ backgroundColor: BRAND.teal }}
-              >
-                <ArrowLeft size={16} />
-                Browse jobs
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-              >
-                <RefreshCw size={16} />
-                Try again
-              </button>
-            </div>
-          </div>
-        </main>
-
-  
+  if (loading) return <LoadingState />;
+  if (error || !job) return (
+    <main className="flex min-h-[75vh] items-center justify-center bg-[#F8F9FE] px-4 py-20">
+      <div className="w-full max-w-lg rounded-3xl border border-indigo-100 bg-white p-9 text-center shadow-xl shadow-indigo-950/5">
+        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500"><AlertCircle size={30}/></span>
+        <h1 className="mt-5 text-2xl font-extrabold text-[#18124A]">Opportunity unavailable</h1>
+        <p className="mt-3 text-sm leading-7 text-slate-500">{error || "This job could not be found."}</p>
+        <div className="mt-7 flex flex-wrap justify-center gap-3"><Link to="/jobs" className="inline-flex items-center gap-2 rounded-xl bg-[#5145E5] px-5 py-3 text-sm font-bold text-white hover:bg-[#4237C9]"><ArrowLeft size={17}/> Browse jobs</Link><button onClick={() => setRetry(v => v+1)} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"><RefreshCw size={16}/> Try again</button></div>
       </div>
-    );
-  }
+    </main>
+  );
 
-  /*
-  |--------------------------------------------------------------------------
-  | JOB DATA
-  |--------------------------------------------------------------------------
-  */
-
+  const company = job.company || {};
+  const companyName = company.name || "Company not specified";
+  const location = job.remote ? (job.location ? `Remote · ${job.location}` : "Remote") : (job.location || job.country || "Not specified");
   const salary = formatSalary(job);
-
-  const location = job.remote
-    ? job.location
-      ? `Remote · ${job.location}`
-      : "Remote"
-    : job.location || job.country || "Location not specified";
-
   const applyUrl = job.apply_url || job.source_url;
-
-  const companySlug = job.company?.slug;
+  const postedAt = job.posted_at || job.discovered_at;
+  const skills = Array.isArray(job.skills) ? job.skills : [];
 
   return (
-    <div className="min-h-screen bg-[#F7FAFC]">
+    <main className="min-h-screen bg-[#F8F9FE] pb-16">
+      <div className="mx-auto max-w-7xl px-4 pt-7 sm:px-6 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 sm:text-sm">
+          <Link to="/" className="hover:text-[#5145E5]">Home</Link><ChevronRight size={14}/><Link to="/jobs" className="hover:text-[#5145E5]">Explore jobs</Link><ChevronRight size={14}/><span className="max-w-[220px] truncate text-[#5145E5] sm:max-w-md">{job.title}</span>
+        </nav>
 
-      <main>
-        {/* TOP AREA */}
-        <section className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-8">
-            <Link
-              to="/jobs"
-              className="mb-7 inline-flex items-center gap-2 text-sm font-bold text-slate-500 transition hover:text-[#1699A4]"
-            >
-              <ArrowLeft size={16} />
-              Back to jobs
-            </Link>
-
-            <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-start">
-              <div className="flex min-w-0 gap-4 sm:gap-5">
-                {/* COMPANY LOGO */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 sm:h-20 sm:w-20">
-                  {job.company?.logo_url ? (
-                    <img
-                      src={job.company.logo_url}
-                      alt={`${getCompanyName(job)} logo`}
-                      className="h-full w-full object-contain p-2"
-                    />
-                  ) : (
-                    <Building2
-                      size={28}
-                      className="text-[#1699A4]"
-                    />
-                  )}
-                </div>
-
-                <div className="min-w-0">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    {job.company?.name &&
-                      (companySlug ? (
-                        <Link
-                          to={`/companies/${companySlug}`}
-                          className="font-extrabold text-[#147C91] transition hover:text-[#071A3D]"
-                        >
-                          {job.company.name}
-                        </Link>
-                      ) : (
-                        <span className="font-extrabold text-[#147C91]">
-                          {job.company.name}
-                        </span>
-                      ))}
-
-                    {job.is_featured && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[#E6A064]/15 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#9A5B22]">
-                        <Sparkles size={11} />
-                        Featured
-                      </span>
-                    )}
-                  </div>
-
-                  <h1
-                    className="break-words text-2xl font-black leading-tight tracking-[-0.03em] sm:text-3xl lg:text-4xl"
-                    style={{ color: BRAND.navy }}
-                  >
-                    {job.title}
-                  </h1>
-
-                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-500">
-                    <span className="flex items-center gap-1.5">
-                      <MapPin size={16} />
-                      {location}
-                    </span>
-
-                    <span className="flex items-center gap-1.5">
-                      <BriefcaseBusiness size={16} />
-                      {formatEmploymentType(job.employment_type)}
-                    </span>
-
-                    <span className="flex items-center gap-1.5">
-                      <Clock3 size={16} />
-                      Posted {formatRelativeDate(job.posted_at)}
-                    </span>
-
-                    {salary && (
-                      <span className="flex items-center gap-1.5 font-semibold text-slate-700">
-                        <Banknote size={16} />
-                        {salary}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* DESKTOP AND MOBILE ACTIONS */}
-              <div className="flex shrink-0 flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle2
-                        size={17}
-                        className="text-emerald-500"
-                      />
-                      Link copied
-                    </>
-                  ) : (
-                    <>
-                      <Share2 size={17} />
-                      Share job
-                    </>
-                  )}
-                </button>
-
-                {applyUrl && (
-                  <a
-                    href={applyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-[#1699A4]/20 transition hover:-translate-y-0.5 hover:opacity-90"
-                    style={{ backgroundColor: BRAND.teal }}
-                  >
-                    Apply now
-                    <ArrowUpRight size={17} />
-                  </a>
-                )}
-              </div>
+        <section className="relative overflow-hidden rounded-[28px] bg-[#18124A] px-5 py-8 text-white shadow-xl shadow-indigo-950/10 sm:px-9 sm:py-10 lg:px-12">
+          <div className="pointer-events-none absolute -right-16 -top-32 h-80 w-80 rounded-full bg-[#5145E5]/60 blur-[85px]"/><div className="pointer-events-none absolute bottom-[-150px] left-[35%] h-64 w-64 rounded-full bg-[#14E0C8]/15 blur-[80px]"/>
+          <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="mb-5 flex flex-wrap items-center gap-2"><span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white"><Sparkles size={13} className="text-[#14E0C8]"/> Career opportunity</span>{job.is_featured && <span className="rounded-full bg-[#14E0C8] px-3 py-1.5 text-xs font-bold text-[#18124A]">Featured</span>}</div>
+              <div className="flex items-start gap-4 sm:gap-5"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-white p-2 sm:h-20 sm:w-20">{company.logo_url ? <img src={company.logo_url} alt={`${companyName} logo`} className="h-full w-full object-contain"/> : <Building2 className="text-[#5145E5]" size={30}/>}</div><div className="min-w-0"><p className="mb-2 text-sm font-semibold text-[#14E0C8]">{companyName}</p><h1 className="break-words text-2xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-[42px]">{job.title}</h1><div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-indigo-100"><span className="inline-flex items-center gap-1.5"><MapPin size={16}/>{location}</span><span className="inline-flex items-center gap-1.5"><BriefcaseBusiness size={16}/>{employmentLabel(job.employment_type)}</span><span className="inline-flex items-center gap-1.5"><Clock3 size={16}/>{relativeDate(postedAt)}</span></div></div></div>
             </div>
+            <div className="flex shrink-0 flex-wrap gap-3 lg:flex-col lg:items-stretch"><button onClick={shareJob} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-bold text-white transition hover:bg-white/20">{copied ? <CheckCircle2 size={18}/> : <Share2 size={18}/>} {copied ? "Link copied" : "Share job"}</button>{applyUrl && <a href={applyUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#14E0C8] px-7 py-3.5 text-sm font-extrabold text-[#18124A] transition hover:bg-[#7CF3E5]">Apply now <ArrowUpRight size={18}/></a>}</div>
           </div>
         </section>
 
-        {/* CONTENT */}
-        <section className="py-8 sm:py-10">
-          <div className="mx-auto grid max-w-7xl gap-7 px-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-8">
-            {/* LEFT */}
-            <div className="min-w-0 space-y-6">
-              {/* QUICK DETAILS */}
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <InfoCard
-                  icon={MapPin}
-                  label="Location"
-                  value={location}
-                />
-
-                <InfoCard
-                  icon={BriefcaseBusiness}
-                  label="Job type"
-                  value={formatEmploymentType(job.employment_type)}
-                />
-
-                <InfoCard
-                  icon={Wifi}
-                  label="Work arrangement"
-                  value={job.remote ? "Remote" : "On-site / Hybrid"}
-                />
-
-                <InfoCard
-                  icon={Banknote}
-                  label="Salary"
-                  value={salary || "Not disclosed"}
-                />
-              </div>
-
-              {/* DESCRIPTION */}
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                <h2
-                  className="text-xl font-black"
-                  style={{ color: BRAND.navy }}
-                >
-                  About this opportunity
-                </h2>
-
-                <div className="mt-6">
-                  <JobDescription description={job.description} />
-                </div>
-              </div>
-
-              {/* SKILLS */}
-              {job.skills?.length > 0 && (
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-                  <div className="flex items-center gap-2">
-                    <Tag
-                      size={19}
-                      className="text-[#1699A4]"
-                    />
-
-                    <h2
-                      className="text-xl font-black"
-                      style={{ color: BRAND.navy }}
-                    >
-                      Skills and qualifications
-                    </h2>
-                  </div>
-
-                  <p className="mt-2 text-sm text-slate-500">
-                    Explore the skills and technologies associated with
-                    this opportunity.
-                  </p>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {job.skills.map((skill, index) => (
-                      <Link
-                        key={skill.id || skill.slug || skill.name || index}
-                        to={
-                          skill.slug
-                            ? `/jobs?skill=${encodeURIComponent(
-                                skill.slug
-                              )}`
-                            : "/jobs"
-                        }
-                        className="rounded-full border border-[#1699A4]/20 bg-[#1699A4]/5 px-4 py-2 text-sm font-bold text-[#147C91] transition hover:border-[#1699A4] hover:bg-[#1699A4] hover:text-white"
-                      >
-                        {skill.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* APPLICATION CTA */}
-              {applyUrl && (
-                <div
-                  className="relative overflow-hidden rounded-3xl p-7 text-white sm:p-8"
-                  style={{ backgroundColor: BRAND.navy }}
-                >
-                  <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#1699A4]/20 blur-3xl" />
-
-                  <div className="relative">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
-                      <Sparkles
-                        size={21}
-                        className="text-[#E6A064]"
-                      />
-                    </div>
-
-                    <h2 className="mt-5 text-2xl font-black">
-                      Ready to take the next step?
-                    </h2>
-
-                    <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-                      Visit the employer's application page to review the
-                      complete requirements and submit your application.
-                    </p>
-
-                    <a
-                      href={applyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#1699A4] px-6 py-3.5 text-sm font-extrabold text-white transition hover:bg-[#147C91]"
-                    >
-                      Apply for this job
-                      <ExternalLink size={16} />
-                    </a>
-                  </div>
-                </div>
-              )}
-
-              {!applyUrl && (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                  <div className="flex gap-3">
-                    <AlertCircle
-                      size={20}
-                      className="mt-0.5 shrink-0 text-amber-600"
-                    />
-
-                    <div>
-                      <h3 className="font-extrabold text-amber-900">
-                        Application link unavailable
-                      </h3>
-
-                      <p className="mt-1 text-sm leading-6 text-amber-800">
-                        An application link has not been provided for this
-                        listing. Review the job details and check the
-                        employer's website for further information.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* SIDEBAR */}
-            <aside>
-              <div className="space-y-5 lg:sticky lg:top-24">
-                {/* COMPANY */}
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#1699A4]">
-                    About the employer
-                  </p>
-
-                  <div className="mt-4 flex items-center gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                      {job.company?.logo_url ? (
-                        <img
-                          src={job.company.logo_url}
-                          alt={`${getCompanyName(job)} logo`}
-                          className="h-full w-full object-contain p-1.5"
-                        />
-                      ) : (
-                        <Building2
-                          size={21}
-                          className="text-[#1699A4]"
-                        />
-                      )}
-                    </div>
-
-                    <div className="min-w-0">
-                      <h3
-                        className="break-words font-black"
-                        style={{ color: BRAND.navy }}
-                      >
-                        {getCompanyName(job)}
-                      </h3>
-
-                      {job.company?.active_jobs_count !== undefined && (
-                        <p className="mt-0.5 text-xs text-slate-500">
-                          {job.company.active_jobs_count} active jobs
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {job.company?.description && (
-                    <p className="mt-4 line-clamp-5 text-sm leading-6 text-slate-500">
-                      {job.company.description}
-                    </p>
-                  )}
-
-                  <div className="mt-5 space-y-2">
-                    {companySlug && (
-                      <Link
-                        to={`/jobs?company=${encodeURIComponent(
-                          companySlug
-                        )}`}
-                        className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-[#1699A4]/40 hover:bg-[#1699A4]/5"
-                      >
-                        View company jobs
-                        <ArrowUpRight size={16} />
-                      </Link>
-                    )}
-
-                    {job.company?.website && (
-                      <a
-                        href={job.company.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-                      >
-                        Company website
-                        <Globe2 size={16} />
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* JOB INFO */}
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3
-                    className="font-black"
-                    style={{ color: BRAND.navy }}
-                  >
-                    Job overview
-                  </h3>
-
-                  <div className="mt-5 space-y-5">
-                    <SidebarDetail
-                      icon={CalendarDays}
-                      label="Date posted"
-                      value={formatDate(job.posted_at)}
-                    />
-
-                    {job.category?.name && (
-                      <SidebarDetail
-                        icon={BriefcaseBusiness}
-                        label="Category"
-                        value={job.category.name}
-                      />
-                    )}
-
-                    <SidebarDetail
-                      icon={MapPin}
-                      label="Location"
-                      value={location}
-                    />
-
-                    <SidebarDetail
-                      icon={BriefcaseBusiness}
-                      label="Employment type"
-                      value={formatEmploymentType(job.employment_type)}
-                    />
-
-                    {job.source && (
-                      <SidebarDetail
-                        icon={Globe2}
-                        label="Listing source"
-                        value={
-                          job.source.charAt(0).toUpperCase() +
-                          job.source.slice(1)
-                        }
-                      />
-                    )}
-                  </div>
-                </div>
-
-                {/* APPLICATION NOTE */}
-                <div className="rounded-3xl border border-[#1699A4]/20 bg-[#1699A4]/5 p-5">
-                  <div className="flex gap-3">
-                    <CheckCircle2
-                      size={20}
-                      className="mt-0.5 shrink-0 text-[#1699A4]"
-                    />
-
-                    <div>
-                      <h4
-                        className="text-sm font-extrabold"
-                        style={{ color: BRAND.navy }}
-                      >
-                        Apply through the employer
-                      </h4>
-
-                      <p className="mt-1 text-xs leading-5 text-slate-600">
-                        Quantahire helps you discover job opportunities.
-                        When an external application link is available,
-                        applications are completed through the employer's
-                        hiring page.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </aside>
+        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="min-w-0 space-y-6">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><InfoTile icon={MapPin} label="Location" value={location}/><InfoTile icon={BriefcaseBusiness} label="Employment" value={employmentLabel(job.employment_type)}/><InfoTile icon={Wifi} label="Work mode" value={job.remote ? "Remote" : "Not specified"}/><InfoTile icon={Wallet} label="Salary range" value={salary}/></div>
+            <section className="rounded-3xl border border-[#E8E7F6] bg-white p-5 shadow-sm shadow-indigo-950/[0.025] sm:p-8"><div className="mb-6 flex items-center gap-3"><span className="h-8 w-1 rounded-full bg-[#5145E5]"/><div><p className="text-xs font-bold uppercase tracking-widest text-[#5145E5]">Job description</p><h2 className="mt-1 text-xl font-extrabold text-[#18124A] sm:text-2xl">About this opportunity</h2></div></div><Description value={job.description}/></section>
+            {skills.length > 0 && <section className="rounded-3xl border border-[#E8E7F6] bg-white p-5 sm:p-8"><div className="mb-5 flex items-center gap-3 text-[#5145E5]"><Tag size={21}/><h2 className="text-xl font-extrabold text-[#18124A]">Skills & technologies</h2></div><div className="flex flex-wrap gap-2">{skills.map((skill, i) => { const name = typeof skill === "string" ? skill : skill?.name; if (!name) return null; return <span key={skill?.id || skill?.slug || i} className="rounded-full border border-[#DCD8FF] bg-[#F5F3FF] px-4 py-2 text-sm font-semibold text-[#5145E5]">{name}</span>; })}</div></section>}
+            <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#5145E5] to-[#34268C] p-6 text-white sm:p-8"><div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#14E0C8]/20 blur-3xl"/><div className="relative"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15"><Sparkles size={21} className="text-[#14E0C8]"/></div><h2 className="mt-4 text-2xl font-extrabold">Your next career move starts here.</h2><p className="mt-2 max-w-xl text-sm leading-7 text-indigo-100">Explore the opportunity, review the requirements, and take the next step toward your career goals.</p>{applyUrl ? <a href={applyUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#14E0C8] px-6 py-3.5 text-sm font-bold text-[#18124A] hover:bg-[#7CF3E5]">Apply for this job <ArrowRight size={18}/></a> : <p className="mt-5 rounded-xl bg-white/10 p-4 text-sm">An application link is not available for this listing. Check the employer's website for further information.</p>}</div></section>
           </div>
-        </section>
-      </main>
-    </div>
-  );
-}
 
-/*
-|--------------------------------------------------------------------------
-| INFO CARD
-|--------------------------------------------------------------------------
-*/
-
-function InfoCard({ icon: Icon, label, value }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#1699A4]/10 text-[#1699A4]">
-          <Icon size={17} />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            {label}
-          </p>
-
-          <p className="mt-1 break-words text-sm font-extrabold text-[#071A3D]">
-            {value}
-          </p>
+          <aside className="min-w-0"><div className="space-y-5 lg:sticky lg:top-24"><section className="rounded-3xl border border-[#E8E7F6] bg-white p-6 shadow-sm shadow-indigo-950/[0.025]"><div className="mb-5 flex items-center gap-2"><Building2 size={19} className="text-[#5145E5]"/><h2 className="text-lg font-extrabold text-[#18124A]">About the company</h2></div><div className="flex items-center gap-3"><div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-indigo-100 bg-white p-2">{company.logo_url ? <img src={company.logo_url} alt={`${companyName} logo`} className="h-full w-full object-contain"/> : <Building2 className="text-[#5145E5]"/>}</div><div className="min-w-0"><p className="break-words font-extrabold text-[#18124A]">{companyName}</p>{company.location && <p className="mt-1 text-xs text-slate-500">{company.location}</p>}</div></div>{company.description && <p className="mt-4 line-clamp-5 text-sm leading-7 text-slate-600">{company.description}</p>}<div className="mt-5 space-y-2">{company.slug && <Link to={`/jobs/company/${company.slug}`} className="flex items-center justify-between rounded-xl border border-indigo-100 bg-[#F8F7FF] px-4 py-3 text-sm font-bold text-[#5145E5] hover:bg-[#EFEDFF]">View company jobs <ArrowUpRight size={17}/></Link>}{company.website && <a href={company.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Visit company website <ExternalLink size={16}/></a>}</div></section>
+            <section className="rounded-3xl border border-[#E8E7F6] bg-white p-6 shadow-sm shadow-indigo-950/[0.025]"><h2 className="text-lg font-extrabold text-[#18124A]">Job overview</h2><div className="mt-3 divide-y divide-slate-100"><SidebarLine icon={CalendarDays} label="Posted" value={formatDate(postedAt)}/>{job.category?.name && <SidebarLine icon={Tag} label="Category" value={job.category.name}/>}<SidebarLine icon={MapPin} label="Location" value={location}/><SidebarLine icon={BriefcaseBusiness} label="Job type" value={employmentLabel(job.employment_type)}/>{(job.application_deadline || job.expires_at) && <SidebarLine icon={Clock3} label="Application deadline" value={formatDate(job.application_deadline || job.expires_at)}/>}</div></section>
+            <div className="flex items-start gap-3 rounded-2xl border border-[#C7F7EF] bg-[#ECFFFB] p-5"><ShieldCheck className="mt-0.5 shrink-0 text-[#138F83]" size={20}/><div><p className="text-sm font-bold text-[#18124A]">Apply with confidence</p><p className="mt-1 text-xs leading-6 text-slate-600">External application links take you to the employer's hiring page. Always review the employer and role before sharing personal information.</p></div></div>
+          </div></aside>
         </div>
       </div>
-    </div>
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| SIDEBAR DETAIL
-|--------------------------------------------------------------------------
-*/
-
-function SidebarDetail({ icon: Icon, label, value }) {
-  return (
-    <div className="flex gap-3">
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-[#1699A4]">
-        <Icon size={15} />
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-          {label}
-        </p>
-
-        <p className="mt-1 break-words text-sm font-bold text-slate-700">
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/*
-|--------------------------------------------------------------------------
-| DESCRIPTION
-|--------------------------------------------------------------------------
-*/
-
-function JobDescription({ description }) {
-  if (!description) {
-    return (
-      <p className="text-sm leading-7 text-slate-500">
-        No detailed description is available for this job yet.
-      </p>
-    );
-  }
-
-  /*
-   * Job descriptions are generally plain text.
-   * Split paragraphs where possible to improve readability.
-   */
-
-  const paragraphs = description
-    .split(/\n{2,}/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  if (paragraphs.length > 1) {
-    return (
-      <div className="space-y-5 whitespace-pre-line text-[15px] leading-7 text-slate-600">
-        {paragraphs.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="whitespace-pre-line text-[15px] leading-8 text-slate-600">
-      {description}
-    </div>
+    </main>
   );
 }

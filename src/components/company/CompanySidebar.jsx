@@ -24,6 +24,8 @@ import {
   LoaderCircle,
 } from "lucide-react";
 
+import logo from "../../assets/logo.png";
+
 const workspaceLinks = [
   {
     label: "Overview",
@@ -218,37 +220,25 @@ export default function CompanySidebar({
       >
         {/* Brand */}
         <div className="flex h-[80px] shrink-0 items-center justify-between border-b border-slate-100 px-5">
-          <Link
-            to="/company/dashboard"
-            onClick={onClose}
-            className="flex min-w-0 items-center gap-3"
-          >
-            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#5145E5] shadow-lg shadow-indigo-500/20">
-              <BriefcaseBusiness
-                size={22}
-                className="text-white"
-                strokeWidth={2}
-              />
+          <NavLink
+  to="/company/dashboard"
+  onClick={onClose}
+  className="flex flex-col items-center justify-center"
+>
+  <img
+    src={logo}
+    alt="Quantahire Logo"
+    className="h-12 w-auto max-w-[190px] object-contain sm:h-14"
+  />
 
-              <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-[#14E0C8]" />
-            </div>
+  <p className="mt-1 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+    Employer Workspace
+  </p>
+</NavLink>
+          
 
-            <div className="min-w-0">
-              <h1 className="text-[21px] font-extrabold tracking-[-0.06em] text-[#18124A]">
-                Quanta
-                <span className="text-[#5145E5]">
-                  hire
-                </span>
-                <span className="text-[#14E0C8]">
-                  .
-                </span>
-              </h1>
-
-              <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
-                Employer Workspace
-              </p>
-            </div>
-          </Link>
+              
+        
 
           <button
             type="button"
