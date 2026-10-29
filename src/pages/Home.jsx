@@ -313,21 +313,6 @@ export default function Home() {
   };
 
 
-  const heroImages = [
-  "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=85",
-  "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85",
-  "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=1920&q=85",
-];
-
-const [currentSlide, setCurrentSlide] = useState(0);
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-  }, 5000);
-
-  return () => clearInterval(interval);
-}, []);
 
 
 
@@ -343,27 +328,49 @@ useEffect(() => {
 
 <section className="relative isolate w-full min-w-0 overflow-hidden bg-[#07132C] text-white">
 
-  {/* Background image slider */}
-  <div
-    aria-hidden="true"
-     className="pointer-events-none absolute inset-0 -z-10 bg-[#061329]/40 sm:bg-gradient-to-r sm:from-[#061329]/65 sm:via-[#071A35]/40 sm:to-[#061329]/20"
+  {/* Background video */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+>
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    preload="metadata"
+    poster="/images/hero-poster.jpg"
+    className="absolute inset-0 h-full w-full object-cover object-center"
   >
-    {heroImages.map((image, index) => (
-      <div
-        key={image}
-        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-[1500ms] ease-in-out ${
-          currentSlide === index ? "opacity-100" : "opacity-0"
-        }`}
-        style={{
-          backgroundImage: `url("${image}")`,
-          transform:
-            currentSlide === index ? "scale(1.04)" : "scale(1)",
-          transition:
-            "opacity 1500ms ease-in-out, transform 6000ms ease-out",
-        }}
-      />
-    ))}
-  </div>
+    <source
+      src="/videos/quantahire-hero.mp4"
+      type="video/mp4"
+    />
+  </video>
+</div>
+
+{/* Responsive dark overlay for text readability */}
+<div
+  aria-hidden="true"
+  className="
+    pointer-events-none absolute inset-0 -z-10
+    bg-[#061329]/55
+    lg:bg-gradient-to-r
+    lg:from-[#061329]/75
+    lg:via-[#071A35]/45
+    lg:to-[#061329]/25
+  "
+/>
+
+{/* Subtle branded gradients */}
+<div
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 -z-10"
+  style={{
+    background:
+      "radial-gradient(60rem 30rem at 85% -10%, rgba(20,224,200,0.08), transparent 60%), radial-gradient(50rem 30rem at -10% 10%, rgba(81,69,229,0.08), transparent 60%)",
+  }}
+/>
 
   {/* Dark responsive overlay */}
   <div
@@ -581,29 +588,6 @@ useEffect(() => {
 
   </div>
 
-  {/* Slider navigation dots */}
-  <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center justify-center gap-2 sm:bottom-6 sm:gap-3">
-    {heroImages.map((_, index) => (
-      <button
-        key={index}
-        type="button"
-        onClick={() => setCurrentSlide(index)}
-        aria-label={`Go to slide ${index + 1}`}
-        aria-current={
-          currentSlide === index ? "true" : undefined
-        }
-        className="flex h-8 w-10 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14E0C8]"
-      >
-        <span
-          className={`block h-2.5 rounded-full transition-all duration-300 ${
-            currentSlide === index
-              ? "w-8 bg-[#14E0C8]"
-              : "w-2.5 bg-white/50"
-          }`}
-        />
-      </button>
-    ))}
-  </div>
 
 </section>
 
