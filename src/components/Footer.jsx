@@ -9,16 +9,16 @@ const COLUMNS = [
     links: [
       { label: "Find jobs", to: "/jobs" },
       { label: "Quantum Talent Copilot", to: "/copilot" },
-      { label: "AI resume tailor", to: "/copilot#resume-tailor" },
+      { label: "AI resume tailor", to: "/copilot" },
       { label: "Salary calculators", to: "/salaries" },
     ],
   },
   {
     title: "Employers",
     links: [
-      { label: "Post a job ($99)", to: "/employers/post-job" },
+      { label: "Post a job ($99)", to: "/jobs/new" },
       { label: "Enterprise quantum sourcing", to: "/enterprise" },
-      { label: "Recruiter login", to: "/login?role=recruiter" },
+      { label: "Recruiter login", to: "/signin" },
     ],
   },
   {

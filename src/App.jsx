@@ -20,6 +20,8 @@ import LinkedInCallback from "./pages/LinkedInCallback";
 import Plans from "./pages/Plans";
 import MySubscription from "./pages/MySubscription";
 import PaymentCallback from "./pages/PaymentCallback";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 
 // auth
@@ -71,6 +73,8 @@ export default function App() {
         <Route path="/plans" element={<Plans />} />
         <Route path="/subscription" element={<MySubscription />} />
         <Route path="/payment/callback" element={<PaymentCallback />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
 
         </Route>
 
