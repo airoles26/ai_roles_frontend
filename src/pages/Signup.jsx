@@ -232,7 +232,13 @@ const handleSubmit = async (event) => {
   return (
     <div className="min-h-screen bg-[#F8F9FF] lg:grid lg:grid-cols-2">
       {/* LEFT BRANDING PANEL */}
-      <aside className="relative hidden min-h-screen flex-col justify-between overflow-hidden bg-[#18124A] px-12 py-12 text-white lg:flex xl:px-20">
+      <aside
+  className={`relative hidden min-h-screen flex-col overflow-hidden bg-[#18124A] px-12 py-12 text-white lg:flex xl:px-20 ${
+    form.role === "employer"
+      ? "justify-start gap-8"
+      : "justify-between"
+  }`}
+>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#211766] via-[#34238C] to-[#5145E5]" />
 
         <div className="pointer-events-none absolute -right-32 -top-32 h-[450px] w-[450px] rounded-full bg-[#14E0C8]/20 blur-[100px]" />
@@ -255,7 +261,11 @@ const handleSubmit = async (event) => {
           />
         </Link>
 
-        <div className="relative z-10 max-w-xl py-14">
+        <div
+  className={`relative z-10 max-w-xl ${
+    form.role === "employer" ? "py-2" : "py-14"
+  }`}
+>
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#14E0C8]/30 bg-[#14E0C8]/10 px-4 py-2 text-xs font-semibold tracking-wide text-[#6FFFEF]">
             <Sparkles size={15} />
             WELCOME TO QUANTAHIRE
