@@ -18,6 +18,7 @@ import Navbar, { DISPLAY_FONT } from "../components/Navbar";
 import JobCard, { timeAgo } from "../components/JobCard";
 import CopilotBanner from "../components/CopilotBanner";
 import api from "../api/api";
+import { publicApi } from "../api/api";
 import { startCheckout } from "../components/checkout/Checkout";
 
 import SEO from "../components/SEO";
@@ -121,7 +122,7 @@ export default function Jobs() {
     let cancelled = false;
     api.get(ME_ENDPOINT).then(({ data }) => !cancelled && setViewer(data)).catch(() => {});
     api.get(STATS_ENDPOINT).then(({ data }) => !cancelled && setStats(data)).catch(() => {});
-    Promise.all([api.get("/categories/"), api.get("/companies/"), api.get("/skills/")])
+    Promise.all([publicApi.get("/categories/"), publicApi.get("/companies/"), publicApi.get("/skills/")])
       .then(([c, co, s]) => {
         if (!cancelled) setOptions({ categories: results(c.data), companies: results(co.data), skills: results(s.data) });
       })
@@ -147,7 +148,7 @@ export default function Jobs() {
     let cancelled = false;
     setLoading(true);
     setError("");
-    api
+    publicApi
       .get(`/jobs/?${apiQuery}`)
       .then(({ data }) => {
         if (cancelled) return;
