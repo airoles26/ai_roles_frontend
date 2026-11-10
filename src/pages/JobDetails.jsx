@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import api from "../api/api";
 
+import Description from "../components/Description";
+
 const BRAND = { primary: "#5145E5", dark: "#18124A", teal: "#14E0C8" };
 
 function formatDate(value) {
@@ -57,10 +59,10 @@ function SidebarLine({ icon: Icon, label, value }) {
     </div>
   );
 }
-function Description({ value }) {
-  if (!value) return <p className="text-slate-500">No detailed description is available for this job yet.</p>;
-  return <div className="space-y-4 whitespace-pre-line break-words text-[15px] leading-8 text-slate-600">{String(value).split(/\n\s*\n/).filter(Boolean).map((part, index) => <p key={index}>{part.trim()}</p>)}</div>;
-}
+// function Description({ value }) {
+//   if (!value) return <p className="text-slate-500">No detailed description is available for this job yet.</p>;
+//   return <div className="space-y-4 whitespace-pre-line break-words text-[15px] leading-8 text-slate-600">{String(value).split(/\n\s*\n/).filter(Boolean).map((part, index) => <p key={index}>{part.trim()}</p>)}</div>;
+// }
 function LoadingState() {
   return <div className="min-h-screen bg-[#F8F9FE]"><div className="mx-auto max-w-7xl animate-pulse px-4 py-10 sm:px-6 lg:px-8"><div className="mb-7 h-4 w-32 rounded bg-indigo-100"/><div className="h-64 rounded-[28px] bg-indigo-100"/><div className="mt-8 grid gap-7 lg:grid-cols-[minmax(0,1fr)_330px]"><div className="space-y-5"><div className="grid grid-cols-2 gap-3 md:grid-cols-4">{[1,2,3,4].map(i=><div key={i} className="h-32 rounded-2xl bg-indigo-50"/>)}</div><div className="h-96 rounded-3xl bg-indigo-50"/></div><div className="h-80 rounded-3xl bg-indigo-50"/></div></div></div>;
 }
@@ -139,7 +141,7 @@ export default function JobDetails() {
         <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="min-w-0 space-y-6">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><InfoTile icon={MapPin} label="Location" value={location}/><InfoTile icon={BriefcaseBusiness} label="Employment" value={employmentLabel(job.employment_type)}/><InfoTile icon={Wifi} label="Work mode" value={job.remote ? "Remote" : "Not specified"}/><InfoTile icon={Wallet} label="Salary range" value={salary}/></div>
-            <section className="rounded-3xl border border-[#E8E7F6] bg-white p-5 shadow-sm shadow-indigo-950/[0.025] sm:p-8"><div className="mb-6 flex items-center gap-3"><span className="h-8 w-1 rounded-full bg-[#5145E5]"/><div><p className="text-xs font-bold uppercase tracking-widest text-[#5145E5]">Job description</p><h2 className="mt-1 text-xl font-extrabold text-[#18124A] sm:text-2xl">About this opportunity</h2></div></div><Description value={job.description}/></section>
+            <section className="rounded-3xl border border-[#E8E7F6] bg-white p-5 shadow-sm shadow-indigo-950/[0.025] sm:p-8"><div className="mb-6 flex items-center gap-3"><span className="h-8 w-1 rounded-full bg-[#5145E5]"/><div><p className="text-xs font-bold uppercase tracking-widest text-[#5145E5]">Job description</p><h2 className="mt-1 text-xl font-extrabold text-[#18124A] sm:text-2xl">About this opportunity</h2></div></div><Description value={job.description} /></section>
             {skills.length > 0 && <section className="rounded-3xl border border-[#E8E7F6] bg-white p-5 sm:p-8"><div className="mb-5 flex items-center gap-3 text-[#5145E5]"><Tag size={21}/><h2 className="text-xl font-extrabold text-[#18124A]">Skills & technologies</h2></div><div className="flex flex-wrap gap-2">{skills.map((skill, i) => { const name = typeof skill === "string" ? skill : skill?.name; if (!name) return null; return <span key={skill?.id || skill?.slug || i} className="rounded-full border border-[#DCD8FF] bg-[#F5F3FF] px-4 py-2 text-sm font-semibold text-[#5145E5]">{name}</span>; })}</div></section>}
             <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#5145E5] to-[#34268C] p-6 text-white sm:p-8"><div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#14E0C8]/20 blur-3xl"/><div className="relative"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15"><Sparkles size={21} className="text-[#14E0C8]"/></div><h2 className="mt-4 text-2xl font-extrabold">Your next career move starts here.</h2><p className="mt-2 max-w-xl text-sm leading-7 text-indigo-100">Explore the opportunity, review the requirements, and take the next step toward your career goals.</p>{applyUrl ? <a href={applyUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#14E0C8] px-6 py-3.5 text-sm font-bold text-[#18124A] hover:bg-[#7CF3E5]">Apply for this job <ArrowRight size={18}/></a> : <p className="mt-5 rounded-xl bg-white/10 p-4 text-sm">An application link is not available for this listing. Check the employer's website for further information.</p>}</div></section>
           </div>
