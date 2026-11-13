@@ -13,7 +13,11 @@ import {
   Building2,
   LoaderCircle,
   CheckCircle2,
+  Bookmark,
 } from "lucide-react";
+
+import { useEffect, useState } from "react";
+import { savedJobsApi } from "../api/api";
 
 import { DISPLAY_FONT } from "./Navbar";
 
@@ -189,6 +193,91 @@ export default function JobCard({
   autoApplyBusy = false,
   subscribed = false,
 }) {
+
+
+
+const [isSaved, setIsSaved] = useState(false);
+const [checkingSaved, setCheckingSaved] = useState(false);
+const [savingJob, setSavingJob] = useState(false);
+const [saveError, setSaveError] = useState("");
+
+const jobId = job?.id;
+
+useEffect(() => {
+  let active = true;
+
+  setIsSaved(false);
+  setSaveError("");
+
+  if (!jobId) {
+    setCheckingSaved(false);
+    return;
+  }
+
+  const token =
+    localStorage.getItem("access") ||
+    sessionStorage.getItem("access");
+
+  if (!token) {
+    setCheckingSaved(false);
+    return;
+  }
+
+  setCheckingSaved(true);
+
+  savedJobsApi
+    .checkSaved(jobId)
+    .then((response) => {
+      if (active) {
+        setIsSaved(Boolean(response.data.saved));
+      }
+    })
+    .catch((error) => {
+      if (active) {
+        console.error("Saved job check failed:", error);
+        setSaveError("Unable to check saved status.");
+      }
+    })
+    .finally(() => {
+      if (active) setCheckingSaved(false);
+    });
+
+  return () => {
+    active = false;
+  };
+}, [jobId]);
+
+const handleSaveJob = async () => {
+  if (!jobId || savingJob || checkingSaved) return;
+
+  setSavingJob(true);
+  setSaveError("");
+
+  try {
+    if (isSaved) {
+      await savedJobsApi.removeSavedJob(jobId);
+      setIsSaved(false);
+    } else {
+      await savedJobsApi.saveJob(jobId);
+      setIsSaved(true);
+    }
+  } catch (error) {
+    if (error.response?.status === 401) {
+      setSaveError("Please sign in to save jobs.");
+    } else {
+      setSaveError(
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        "Unable to update saved job."
+      );
+    }
+  } finally {
+    setSavingJob(false);
+  }
+};
+
+
+
   if (!job) return null;
 
   const companyName =
@@ -398,6 +487,47 @@ export default function JobCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+
+
+<div className="flex flex-wrap items-center gap-2">
+  {/* Save / Unsave Job */}
+  <button
+    type="button"
+    onClick={handleSaveJob}
+    disabled={savingJob || checkingSaved}
+    aria-pressed={isSaved}
+    title={isSaved ? "Remove saved job" : "Save this job"}
+    className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60 ${
+      isSaved
+        ? "border-[#5145E5] bg-[#5145E5]/10 text-[#5145E5]"
+        : "border-slate-200 bg-white text-slate-600 hover:border-[#5145E5] hover:bg-indigo-50 hover:text-[#5145E5]"
+    }`}
+  >
+    {savingJob || checkingSaved ? (
+      <LoaderCircle
+        size={15}
+        className="animate-spin"
+      />
+    ) : (
+      <Bookmark
+        size={16}
+        fill={isSaved ? "currentColor" : "none"}
+      />
+    )}
+
+    {savingJob
+      ? "Saving..."
+      : checkingSaved
+      ? "Checking..."
+      : isSaved
+      ? "Saved"
+      : "Save Job"}
+  </button>
+
+</div>
+
+
+
           {canAutoApply ? (
             <>
               <Link

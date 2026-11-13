@@ -108,6 +108,31 @@ export const jobsApi = {
 };
 
 
+
+
+
+export const savedJobsApi = {
+  // Get saved jobs, including search and pagination.
+  getSavedJobs: (params = {}) =>
+    api.get("/saved-jobs/", { params }),
+
+  // Save a job.
+  saveJob: (jobId) =>
+    api.post("/saved-jobs/", {
+      job_id: jobId,
+    }),
+
+  // Check if a specific job is saved.
+  checkSaved: (jobId) =>
+    api.get(`/saved-jobs/check/${jobId}/`),
+
+  // Remove a saved job.
+  removeSavedJob: (jobId) =>
+    api.delete(`/saved-jobs/${jobId}/`),
+};
+
+
+
 // ========================================
 // DEFAULT EXPORT
 // Existing authenticated imports still work
