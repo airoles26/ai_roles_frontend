@@ -49,7 +49,7 @@ export default function Navbar() {
     try {
       await startCheckout("trial", navigate);
     } catch {
-      navigate("/signup?plan=trial");
+      navigate("/signup");
     } finally {
       setBusy(false);
     }
