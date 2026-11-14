@@ -154,6 +154,37 @@ export const workerSettingsApi = {
 
 
 
+export const autoApplyApi = {
+  dashboard: () =>
+    api.get("/worker/auto-apply/dashboard/"),
+
+  getSettings: () =>
+    api.get("/worker/auto-apply/settings/"),
+
+  updateSettings: (data) =>
+    api.patch("/worker/auto-apply/settings/", data),
+
+  jobs: (params = {}) =>
+    api.get("/worker/auto-apply/jobs/", { params }),
+
+  create: (jobId) =>
+    api.post("/worker/auto-apply/", {
+      job_id: jobId,
+    }),
+
+  history: (params = {}) =>
+    api.get("/worker/auto-apply/history/", { params }),
+
+  approve: (taskId) =>
+    api.post(`/worker/auto-apply/${taskId}/approve/`),
+
+  cancel: (taskId) =>
+    api.post(`/worker/auto-apply/${taskId}/cancel/`),
+};
+
+
+
+
 
 // ========================================
 // DEFAULT EXPORT

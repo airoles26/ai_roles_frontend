@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   X, LayoutDashboard, Search, BriefcaseBusiness, Bookmark,
-  Atom, UserRound, Settings, LogOut, Sparkles, ArrowUpRight,CreditCard,
+  Atom, UserRound, Settings, LogOut, Sparkles, ArrowUpRight,CreditCard, Bot,
 } from "lucide-react";
 
 import logo from "../../assets/logo.png";
@@ -13,6 +13,7 @@ const sections = [
     links: [
       { label: "Overview", to: "/worker/dashboard", icon: LayoutDashboard, end: true },
       { label: "Find Jobs", to: "/worker/find-jobs", icon: Search },
+      { label: "Auto Apply", to: "/worker/auto-apply", icon: Bot },
       { label: "My Applications", to: "/worker/applications", icon: BriefcaseBusiness },
       { label: "Saved Jobs", to: "/worker/saved-jobs", icon: Bookmark },
       { label: "Quantum Matches", to: "/worker/quantum-matches", icon: Atom },
