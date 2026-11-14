@@ -133,6 +133,28 @@ export const savedJobsApi = {
 
 
 
+export const workerSettingsApi = {
+  get: () => api.get("/worker/settings/"),
+
+  update: (data) =>
+    api.patch("/worker/settings/", data),
+
+  changePassword: (data) =>
+    api.post(
+      "/worker/settings/change-password/",
+      data
+    ),
+
+  requestDeletion: (reason = "") =>
+    api.post(
+      "/worker/settings/delete-account/",
+      { reason }
+    ),
+};
+
+
+
+
 // ========================================
 // DEFAULT EXPORT
 // Existing authenticated imports still work

@@ -41,6 +41,7 @@ import WorkerProfile from "./pages/worker/WorkerProfile";
 import FindJobs from "./pages/worker/FindJobs";
 import FindJobDetails from "./pages/worker/FindJobDetails";
 import SavedJobs from "./pages/worker/SavedJobs";
+import Settings from "./pages/worker/Settings";
 
 
 
@@ -101,6 +102,7 @@ export default function App() {
             <Route path="quantum-matches" element={<QuantumMatches />} />
             <Route path="profile" element={<WorkerProfile />} />
             <Route path="saved-jobs" element={<SavedJobs />}/>
+            <Route path="settings" element={<Settings />} />
             
         </Route>
 
