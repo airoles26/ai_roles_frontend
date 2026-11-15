@@ -273,7 +273,7 @@ export default function Jobs() {
             )}
 
             <h1 className={`${DISPLAY_FONT} mt-5 max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl`}>
-              {inventory || count ? `Explore ${(inventory ?? count).toLocaleString()} verified tech roles` : "Explore verified tech roles"}
+              {inventory || count ? `Explore ${(inventory ?? count).toLocaleString()} verified roles` : "Explore verified roles"}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Every listing is re-checked against the employer's ATS each day. Add your CV to see

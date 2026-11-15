@@ -122,7 +122,7 @@ const PLANS = [
     features: ["30-day verified listing", "Automated listing verification", "AI match recommendations", "Direct ATS referral pipeline"],
     cta: "Post a job ($99)",
     action: "link",
-    to: "/employers/post-job",
+    to: "/company",
   },
   {
     id: "enterprise",
