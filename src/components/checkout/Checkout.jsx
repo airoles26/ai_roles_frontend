@@ -21,7 +21,7 @@ export async function startCheckout(plan, navigate) {
   } catch (error) {
     // Not signed in yet: create the account first, then resume checkout.
     if (error?.response?.status === 401) {
-      navigate(`/register?plan=${encodeURIComponent(plan)}`);
+      navigate(`/signup?plan=${encodeURIComponent(plan)}`);
       return;
     }
     throw error;

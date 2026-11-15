@@ -98,6 +98,21 @@ export default function AutoApply() {
     }
   }, []);
 
+
+  useEffect(() => {
+  const hasPending = history.some((task) =>
+    ["queued", "processing"].includes(task.status)
+  );
+
+  if (!hasPending) return;
+
+  const interval = setInterval(() => {
+    loadData();
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [history, loadData]);
+
   useEffect(() => {
     loadData();
   }, [loadData]);
