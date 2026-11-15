@@ -684,9 +684,9 @@ export default function Home() {
               Quantahire advantage
             </span>
 
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[#5145E5] transition-all duration-300 group-hover:translate-x-1 group-hover:border-[#5145E5] group-hover:bg-[#5145E5] group-hover:text-white">
+            {/* <div className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[#5145E5] transition-all duration-300 group-hover:translate-x-1 group-hover:border-[#5145E5] group-hover:bg-[#5145E5] group-hover:text-white">
               <ArrowUpRight size={17} />
-            </div>
+            </div> */}
           </div>
         </article>
       ))}
