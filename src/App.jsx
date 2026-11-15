@@ -32,6 +32,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 // company
 import CompanyDashboard from "./pages/company/Dashboard";
 import PostJob from "./pages/company/PostJob";
+import Applicants from "./pages/company/Applicants";
+import Analytics from "./pages/company/Analytics";
+import CompanyProfile from "./pages/company/CompanyProfile";
+import CompanySettings from "./pages/company/CompanySettings";
 
 // worker
 import WorkerDashboard from "./pages/worker/WorkerDashboard";
@@ -74,7 +78,6 @@ export default function App() {
         <Route path="/copilot" element={<Copilot />} />
         <Route path="/auth/linkedin/callback" element={<LinkedInCallback />}/>
         <Route path="/plans" element={<Plans />} />
-        <Route path="/subscription" element={<MySubscription />} />
         <Route path="/payment/callback" element={<PaymentCallback />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
@@ -92,6 +95,12 @@ export default function App() {
             <Route index element={<Navigate to="dashboard" replace />}/>
             <Route path="dashboard" element={<CompanyDashboard />}/>
             <Route path="jobs/new" element={<PostJob />} />
+            <Route path="plans" element={<Plans />} />
+            <Route path="subscription" element={<MySubscription />} />
+            <Route path="applicants" element={<Applicants />} />
+            <Route path="analytics" element={<Analytics />}/>
+            <Route path="company-profile" element={<CompanyProfile />}/>
+            <Route path="settings" element={<CompanySettings />}/>
 
         </Route>
 
@@ -104,6 +113,7 @@ export default function App() {
             <Route path="profile" element={<WorkerProfile />} />
             <Route path="saved-jobs" element={<SavedJobs />}/>
             <Route path="auto-apply" element={<AutoApply />} />
+            <Route path="subscription" element={<MySubscription />} />
             <Route path="settings" element={<Settings />} />
             
         </Route>

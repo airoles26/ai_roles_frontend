@@ -246,7 +246,7 @@ export default function FindJobs() {
     <>
 
     <SEO
-        title="Find Tech Jobs Worldwide | Quantahire"
+        title="Find Jobs Worldwide | Quantahire"
         description="Explore software engineering, AI, data science, remote and technology jobs on Quantahire."
         path="/jobs"
       />
@@ -272,7 +272,7 @@ export default function FindJobs() {
             )}
 
             <h1 className={`${DISPLAY_FONT} mt-5 max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl`}>
-              {inventory || count ? `Explore ${(inventory ?? count).toLocaleString()} verified tech roles` : "Explore verified tech roles"}
+              {inventory || count ? `Explore ${(inventory ?? count).toLocaleString()} verified roles` : "Explore verified roles"}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Every listing is re-checked against the employer's ATS each day. Add your CV to see
@@ -286,11 +286,11 @@ export default function FindJobs() {
               <div className="flex flex-col md:flex-row md:items-center">
                 <label className="flex min-w-0 flex-[1.3] items-center gap-3 px-4 py-3">
                   <Search size={19} className="shrink-0 text-[#5145E5]" />
-                  <span className="sr-only">Job title, tech stack or keyword</span>
+                  <span className="sr-only">Job title, keyword</span>
                   <input
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="Job title, tech stack or keyword (e.g. Python, React)"
+                    placeholder="Job title, keyword (e.g. Python, React)"
                     className="w-full min-w-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400 sm:text-base"
                   />
                 </label>

@@ -17,7 +17,7 @@ const sections = [
       { label: "My Applications", to: "/worker/applications", icon: BriefcaseBusiness },
       { label: "Saved Jobs", to: "/worker/saved-jobs", icon: Bookmark },
       { label: "Quantum Matches", to: "/worker/quantum-matches", icon: Atom },
-      { label: "My Subscriptions", to: "/subscription", icon: CreditCard },
+      { label: "My Subscriptions", to: "/worker/subscription", icon: CreditCard },
     ],
   },
   {

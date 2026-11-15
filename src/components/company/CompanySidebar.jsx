@@ -35,7 +35,7 @@ const workspaceLinks = [
   },
   {
     label: "Manage Jobs",
-    path: "/company/jobs",
+    path: "/company/jobs/new",
     icon: BriefcaseBusiness,
   },
   {
@@ -58,12 +58,12 @@ const managementLinks = [
   },
   {
     label: "Plans",
-    path: "/plans",
+    path: "/company/plans",
     icon: CreditCard,
   },
   {
     label: "Subscription",
-    path: "/subscription",
+    path: "/company/subscription",
     icon: CreditCard,
   },
   {
