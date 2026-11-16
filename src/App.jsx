@@ -10,7 +10,11 @@ import CompanyLayout from "./components/layouts/CompanyLayout";
 import WorkerLayout from "./components/layouts/WorkerLayout";
 import MainLayout from "./layouts/MainLayout";
 
+// components
+import RoleProtectedRoute from "./components/RoleProtectedRoute";
+
 import Home from "./pages/Home";
+import Index from "./pages/Index";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import About from "./pages/About";
@@ -58,8 +62,9 @@ export default function App() {
 
         {/* public pages */}
         <Route element={<MainLayout />}>
+        <Route path="/" element={<Index />}/>
         <Route
-          path="/"
+          path="/home"
           element={<Home />}
         />
 
@@ -91,6 +96,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* company */}
+        <Route element={  <RoleProtectedRoute allowedRoles={["employer"]} />}>
         <Route path="/company" element={<CompanyLayout />}>
             <Route index element={<Navigate to="dashboard" replace />}/>
             <Route path="dashboard" element={<CompanyDashboard />}/>
@@ -103,7 +109,10 @@ export default function App() {
             <Route path="settings" element={<CompanySettings />}/>
 
         </Route>
+        </Route>
+        
 
+        <Route element={  <RoleProtectedRoute allowedRoles={["job_seeker"]} />}>
         <Route path="/worker" element={<WorkerLayout />}>
             <Route path="dashboard" element={<WorkerDashboard />} />
             <Route path="applications" element={<MyApplications />} />
@@ -116,6 +125,7 @@ export default function App() {
             <Route path="subscription" element={<MySubscription />} />
             <Route path="settings" element={<Settings />} />
             
+        </Route>
         </Route>
 
 
